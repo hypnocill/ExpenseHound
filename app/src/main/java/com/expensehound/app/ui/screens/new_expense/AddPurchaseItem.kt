@@ -1,4 +1,4 @@
-package com.expensehound.app.ui.new_expense
+package com.expensehound.app.ui.screens.new_expense
 
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,20 +52,19 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.expensehound.app.R
 import com.expensehound.app.data.Category
-import com.expensehound.app.ui.MainViewModel
-import com.expensehound.app.ui.NewPurchaseItemInput
+import com.expensehound.app.ui.BasePurchaseItemInput
 import com.expensehound.app.ui.theme.margin_standard
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun AddPurchaseItem(demoViewModel: MainViewModel) {
+fun AddPurchaseItem(input: BasePurchaseItemInput, purchaseIntent: MutableState<Boolean>) {
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
     val cameraLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) {
-            demoViewModel.newPurchaseInput.image.value = it
+            input.image.value = it
         }
 
     LaunchedEffect(Unit) {
@@ -72,7 +72,7 @@ fun AddPurchaseItem(demoViewModel: MainViewModel) {
     }
 
     BackHandler(enabled = true, onBack = {
-        demoViewModel.newPurchaseIntent.value = false
+        purchaseIntent.value = false
     })
 
     Surface(
@@ -92,8 +92,8 @@ fun AddPurchaseItem(demoViewModel: MainViewModel) {
             OutlinedTextField(
                 maxLines = 1,
                 placeholder = { Text(stringResource(R.string.name)) },
-                value = demoViewModel.newPurchaseInput.text.value,
-                onValueChange = { demoViewModel.newPurchaseInput.text.value = it },
+                value = input.text.value,
+                onValueChange = { input.text.value = it },
                 modifier = Modifier
                     .padding(margin_standard)
                     .fillMaxWidth()
@@ -104,25 +104,25 @@ fun AddPurchaseItem(demoViewModel: MainViewModel) {
                     maxLines = 1,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     placeholder = { Text(stringResource(R.string.price)) },
-                    value = demoViewModel.newPurchaseInput.price.value,
+                    value = input.price.value,
                     onValueChange = { value ->
-                        demoViewModel.newPurchaseInput.price.value =
+                        input.price.value =
                             value.filter { it.isDigit() || it == '.' }
                     },
                     modifier = Modifier
                         .padding(margin_standard)
                         .fillMaxWidth(0.45f)
                 )
-                CategoryDropdown(demoViewModel.newPurchaseInput)
+                CategoryDropdown(input)
             }
 
             OutlinedTextField(
                 maxLines = 10,
                 placeholder = { Text(stringResource(R.string.comment)) },
-                value = demoViewModel.newPurchaseInput.comment.value,
+                value = input.comment.value,
                 onValueChange = { value ->
                     if (value.length < 500) {
-                        demoViewModel.newPurchaseInput.comment.value = value
+                        input.comment.value = value
                     }
                 },
                 modifier = Modifier
@@ -132,10 +132,10 @@ fun AddPurchaseItem(demoViewModel: MainViewModel) {
 
             Spacer(Modifier.height(margin_standard))
 
-            if (demoViewModel.newPurchaseInput.image.value != null) {
+            if (input.image.value != null) {
 
                 Image(
-                    demoViewModel.newPurchaseInput.image.value!!.asImageBitmap(),
+                    input.image.value!!.asImageBitmap(),
                     null,
                     modifier = Modifier
                         .size(200.dp)
@@ -156,7 +156,7 @@ fun AddPurchaseItem(demoViewModel: MainViewModel) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryDropdown(
-    input: NewPurchaseItemInput
+    input: BasePurchaseItemInput
 ) {
     val suggestions = Category.values()
     var expanded by remember { mutableStateOf(false) }

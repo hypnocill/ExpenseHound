@@ -4,7 +4,7 @@ buildscript {
     ext {
         // Sdk and tools
         compileSdkVersion = 31
-        minSdkVersion = 21
+        minSdkVersion = 23
         targetSdkVersion = 31
         ktlint = "0.42.1"
         detekt_version = '1.18.1'
@@ -44,6 +44,7 @@ plugins {
     id "io.gitlab.arturbosch.detekt" version "1.18.1"
     id "org.jlleitschuh.gradle.ktlint" version "10.2.1"
 }
+
 
 subprojects {
     repositories {

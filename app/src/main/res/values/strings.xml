@@ -6,7 +6,8 @@
     <string name="nav_detail">Detail</string>
     <string name="nav_new_item">New Item</string>
     <string name="launch">Launch</string>
-    <string name="enter_a_color">Нов разход</string>
+    <string name="new_purchase">Нов разход</string>
+    <string name="new_future_purchase">Ново желание</string>
     <string name="name">Име</string>
     <string name="price">Цена</string>
     <string name="comment">Коментар</string>

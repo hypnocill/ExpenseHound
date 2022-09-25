@@ -91,8 +91,8 @@ fun DemoTopAppBar(navController: NavHostController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DemoAddNewPurchaseTopAppBar(onDismiss: () -> Unit, onSave: () -> Unit) {
-    SmallTopAppBar(title = { Text(stringResource(R.string.enter_a_color)) }, navigationIcon = {
+fun DemoAddNewPurchaseTopAppBar(title: String, onDismiss: () -> Unit, onSave: () -> Unit) {
+    SmallTopAppBar(title = { Text(title) }, navigationIcon = {
         IconButton(onClick = { onDismiss() }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_baseline_close_24),

@@ -1,4 +1,4 @@
-package com.expensehound.app.ui.expense_details
+package com.expensehound.app.ui.screens.expense_details
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -23,7 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.expensehound.app.data.PurchaseItem
-import com.expensehound.app.ui.all_expenses.df
+import com.expensehound.app.ui.screens.all_expenses.df
 import com.expensehound.app.ui.theme.ComposeTemplateTheme
 import com.expensehound.app.ui.theme.card_corner_radius_lg
 import com.expensehound.app.ui.theme.margin_double

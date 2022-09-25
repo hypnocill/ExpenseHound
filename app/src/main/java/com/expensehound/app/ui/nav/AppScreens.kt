@@ -13,4 +13,5 @@ sealed class AppScreens(val route: String, @StringRes val resourceId: Int, val i
     object Future : AppScreens("future", R.string.nav_nava, Icons.Outlined.Bookmarks)
     object Stats : AppScreens("stats", R.string.stats, Icons.Outlined.Bookmarks)
     object Detail : AppScreens("details", R.string.nav_detail, Icons.Filled.Details)
+    object FutureDetail : AppScreens("future_details", R.string.nav_detail, Icons.Filled.Details)
 }

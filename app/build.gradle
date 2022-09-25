@@ -40,7 +40,7 @@ android {
             variant ->
                 variant.outputs.each{
                     output->
-                        def name = "m3DemoApp-${variant.buildType.name}-${variant.versionName}-${getDate()}.apk"
+                        def name = "ExpenseHound-${variant.buildType.name}-${variant.versionName}-${getDate()}.apk"
                         output.outputFileName = name
                 }
         }
