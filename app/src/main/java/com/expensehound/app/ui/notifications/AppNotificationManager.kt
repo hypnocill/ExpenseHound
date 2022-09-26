@@ -12,12 +12,32 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
 import androidx.core.app.AlarmManagerCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import com.expensehound.app.R
 import com.expensehound.app.data.PurchaseItem
 import java.util.*
+import kotlin.random.Random
 
 class AppNotificationManager {
     @RequiresApi(Build.VERSION_CODES.M)
     companion object {
+
+        fun notify(context: Context, pendingIntent: PendingIntent, channelId: String, title: String, text: String) {
+            val builder = NotificationCompat.Builder(context, "channel1")
+                .setChannelId(channelId)
+                .setSmallIcon(R.drawable.ic_baseline_add_alert_24)
+                .setContentTitle(title)
+                .setContentText(text)
+                .setAutoCancel(true)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setContentIntent(pendingIntent)
+
+            val notificationManagerCompat = NotificationManagerCompat.from(context)
+            notificationManagerCompat.notify(Random.nextInt(1, 1000), builder.build())
+        }
+
         fun createNotificationChannel(context: Context) {
 
             val notificationManager =

@@ -1,14 +1,8 @@
 package com.expensehound.app.ui
 
-import android.app.AlarmManager
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -34,17 +28,15 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.core.app.AlarmManagerCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.plusAssign
 import com.expensehound.app.R
 import com.expensehound.app.data.PurchaseItem
-import com.expensehound.app.ui.notifications.AlarmReceiver
 import com.expensehound.app.ui.nav.AppScreens
-import com.expensehound.app.ui.nav.DemoAddNewPurchaseTopAppBar
-import com.expensehound.app.ui.nav.DemoBottomNavigation
+import com.expensehound.app.ui.nav.AddNewPurchaseTopAppBar
+import com.expensehound.app.ui.nav.BottomNavigation
 import com.expensehound.app.ui.nav.DemoNavHost
 import com.expensehound.app.ui.nav.DemoTopAppBar
 import com.expensehound.app.ui.notifications.AppNotificationManager
@@ -52,7 +44,6 @@ import com.expensehound.app.ui.theme.ComposeTemplateTheme
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
-import java.util.*
 import kotlin.random.Random
 
 @ExperimentalMaterialNavigationApi
@@ -94,14 +85,15 @@ fun App(demoViewModel: MainViewModel) {
             Scaffold(floatingActionButton = {
                 AppFab(navController, demoViewModel)
             }, bottomBar = {
-                DemoBottomNavigation(navController = navController, items = navScreens)
+                BottomNavigation(navController = navController, items = navScreens)
             }, topBar = {
 
                 if (demoViewModel.newPurchaseIntent.value) {
-                    DemoAddNewPurchaseTopAppBar(
+                    AddNewPurchaseTopAppBar(
                         title = stringResource(id = R.string.new_purchase),
                         onDismiss = {
                             demoViewModel.newPurchaseIntent.value = false
+                            resetNewPurchaseInput(demoViewModel.newPurchaseInput)
                         },
                         onSave = {
                             onPurchaseInputSave(
@@ -113,10 +105,11 @@ fun App(demoViewModel: MainViewModel) {
                         }
                     )
                 } else if (demoViewModel.newFuturePurchaseIntent.value) {
-                    DemoAddNewPurchaseTopAppBar(
+                    AddNewPurchaseTopAppBar(
                         title = stringResource(id = R.string.new_future_purchase),
                         onDismiss = {
                             demoViewModel.newFuturePurchaseIntent.value = false
+                            resetNewPurchaseInput(demoViewModel.newFuturePurchaseInput)
                         },
                         onSave = {
                             onPurchaseInputSave(
@@ -209,7 +202,11 @@ fun AppFab(navController: NavHostController, demoViewModel: MainViewModel) {
         transformOrigin = transformOrigin,
     )
 
-    if (demoViewModel.newPurchaseIntent.value || demoViewModel.newFuturePurchaseIntent.value) {
+
+    if (
+        demoViewModel.newPurchaseIntent.value && demoViewModel.newPurchaseInput.text.value == ""
+        || demoViewModel.newFuturePurchaseIntent.value && demoViewModel.newFuturePurchaseInput.text.value == ""
+    ) {
         purchaseFabVisible = false
         futurePurchaseFabVisible = false
 

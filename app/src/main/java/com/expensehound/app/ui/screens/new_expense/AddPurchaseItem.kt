@@ -7,6 +7,7 @@ import androidx.activity.result.launch
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -53,7 +54,9 @@ import androidx.compose.ui.unit.dp
 import com.expensehound.app.R
 import com.expensehound.app.data.Category
 import com.expensehound.app.ui.BasePurchaseItemInput
+import com.expensehound.app.ui.resetNewPurchaseInput
 import com.expensehound.app.ui.theme.margin_standard
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -68,11 +71,13 @@ fun AddPurchaseItem(input: BasePurchaseItemInput, purchaseIntent: MutableState<B
         }
 
     LaunchedEffect(Unit) {
+        delay(150)
         focusRequester.requestFocus()
     }
 
     BackHandler(enabled = true, onBack = {
         purchaseIntent.value = false
+        resetNewPurchaseInput(input)
     })
 
     Surface(
@@ -89,16 +94,26 @@ fun AddPurchaseItem(input: BasePurchaseItemInput, purchaseIntent: MutableState<B
             horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()
         ) {
             Spacer(Modifier.height(margin_standard))
-            OutlinedTextField(
-                maxLines = 1,
-                placeholder = { Text(stringResource(R.string.name)) },
-                value = input.text.value,
-                onValueChange = { input.text.value = it },
-                modifier = Modifier
-                    .padding(margin_standard)
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester)
-            )
+            Row(modifier = Modifier.fillMaxWidth().padding(margin_standard), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically){
+                OutlinedTextField(
+                    maxLines = 1,
+                    placeholder = { Text(stringResource(R.string.name)) },
+                    value = input.text.value,
+                    onValueChange = { input.text.value = it },
+                    modifier = Modifier
+
+                        .fillMaxWidth(0.80f)
+                        .focusRequester(focusRequester)
+                )
+                IconButton(onClick = { cameraLauncher.launch() }) {
+                    Icon(
+                        modifier = Modifier.size(60.dp),
+                        painter = painterResource(id = R.drawable.ic_outline_camera_alt_24),
+                        contentDescription = ".",
+                        tint = MaterialTheme.colorScheme.outline
+                    )
+                }
+            }
             Row() {
                 OutlinedTextField(
                     maxLines = 1,
@@ -133,21 +148,12 @@ fun AddPurchaseItem(input: BasePurchaseItemInput, purchaseIntent: MutableState<B
             Spacer(Modifier.height(margin_standard))
 
             if (input.image.value != null) {
-
                 Image(
                     input.image.value!!.asImageBitmap(),
                     null,
                     modifier = Modifier
                         .size(200.dp)
-                        .clickable { cameraLauncher.launch() })
-            } else {
-                IconButton(onClick = { cameraLauncher.launch() }) {
-                    Icon(
-                        modifier = Modifier.size(60.dp),
-                        painter = painterResource(id = R.drawable.ic_outline_camera_alt_24),
-                        contentDescription = ".",
-                    )
-                }
+                        .clickable { input.image.value = null })
             }
         }
     }

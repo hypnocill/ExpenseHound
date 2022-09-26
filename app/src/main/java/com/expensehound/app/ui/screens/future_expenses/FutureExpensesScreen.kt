@@ -43,6 +43,7 @@ import com.expensehound.app.ui.components.DateTimePicker
 import com.expensehound.app.ui.notifications.AppNotificationManager
 import com.expensehound.app.ui.screens.all_expenses.ListItemMainActionButtonsRow
 import com.expensehound.app.ui.screens.all_expenses.ShowAddPurchaseItem
+import com.expensehound.app.ui.theme.margin_double
 import com.expensehound.app.ui.theme.margin_half
 import com.expensehound.app.ui.theme.margin_standard
 import com.expensehound.app.ui.theme.touchpoint
@@ -79,7 +80,7 @@ fun FutureExpensesScreen(
             ShowAddPurchaseItem(
                 isVisible = demoViewModel.newFuturePurchaseIntent.value,
                 input = demoViewModel.newFuturePurchaseInput,
-                purchaseIntent = demoViewModel.newPurchaseIntent
+                purchaseIntent = demoViewModel.newFuturePurchaseIntent
             )
         }
     }
@@ -143,7 +144,7 @@ private fun ListItem(
                 Row {
                     Icon(
                         modifier = Modifier
-                            .size(touchpoint)
+                            .size(margin_double)
                             .fillMaxHeight()
                             .clickable { openConvertDialog.value = true },
                         painter = painterResource(id = R.drawable.ic_baseline_check_circle_24),
@@ -154,7 +155,7 @@ private fun ListItem(
                     if (!isConvertedToPurchase) {
                         Icon(
                             modifier = Modifier
-                                .size(touchpoint)
+                                .size(margin_double)
                                 .fillMaxHeight()
                                 .clickable {
                                     val index =
@@ -189,6 +190,12 @@ private fun ListItem(
                                                 notificationId = notificationId,
                                                 notificationTimestamp = it.timeInMillis
                                             )
+
+                                        Toast.makeText(
+                                            context,
+                                            "Успешно добавено известие за ${purchaseItem.name}",
+                                            Toast.LENGTH_LONG
+                                        ).show()
                                     }
                                 },
                             painter = painterResource(id = R.drawable.ic_baseline_notifications_24),
@@ -222,6 +229,7 @@ fun ConvertFutureExpenseToExpenseAlert(
     purchaseItem: PurchaseItem,
     viewModel: MainViewModel
 ) {
+    val context = LocalContext.current
 
     if (!openDialog.value) {
         return Unit
@@ -242,17 +250,24 @@ fun ConvertFutureExpenseToExpenseAlert(
                 onClick = {
                     openDialog.value = false
 
-                    val index = viewModel.futurePurchasesList.indexOfFirst { it.id == purchaseItem.id }
+                    val futurePurchaseIndex = viewModel.futurePurchasesList.indexOfFirst { it.id == purchaseItem.id }
                     val updatedPurchaseItem = purchaseItem.copy(
                         convertedAt = Calendar.getInstance().time,
                         notificationId = null,
                         notificationTimestamp = null
                     )
-                    viewModel.futurePurchasesList[index] = updatedPurchaseItem
+                    viewModel.futurePurchasesList[futurePurchaseIndex] = updatedPurchaseItem
 
                     viewModel.purchasesList.add(
+                        0,
                         updatedPurchaseItem.copy(id = viewModel.purchasesList.lastIndex)
                     )
+
+                    Toast.makeText(
+                        context,
+                        "Успешно закупихте ${purchaseItem.name}",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }) {
                 Text("Продължи")
             }
@@ -300,7 +315,7 @@ fun DeleteAlert(
 
                     Toast.makeText(
                         context,
-                        "Успешно изтрихте " + purchaseItem.name,
+                        "Успешно изтрихте ${purchaseItem.name}",
                         Toast.LENGTH_LONG
                     ).show()
                 }) {

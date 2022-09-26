@@ -21,7 +21,7 @@ import com.expensehound.app.R
 import com.expensehound.app.ui.theme.margin_half
 
 @Composable
-fun DemoBottomNavigation(
+fun BottomNavigation(
     navController: NavHostController, items: List<AppScreens>
 ) {
     NavigationBar() {
@@ -91,7 +91,7 @@ fun DemoTopAppBar(navController: NavHostController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DemoAddNewPurchaseTopAppBar(title: String, onDismiss: () -> Unit, onSave: () -> Unit) {
+fun AddNewPurchaseTopAppBar(title: String, onDismiss: () -> Unit, onSave: () -> Unit) {
     SmallTopAppBar(title = { Text(title) }, navigationIcon = {
         IconButton(onClick = { onDismiss() }) {
             Icon(

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ExpenseHound</string>
+    <string name="app_name">Expense Hound</string>
 
     <string name="nav_home">Разходи</string>
     <string name="nav_nava">Желания</string>

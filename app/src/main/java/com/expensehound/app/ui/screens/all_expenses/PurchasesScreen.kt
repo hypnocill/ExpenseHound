@@ -40,12 +40,14 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import com.expensehound.app.R
 import com.expensehound.app.data.PurchaseItem
 import com.expensehound.app.ui.BasePurchaseItemInput
 import com.expensehound.app.ui.MainViewModel
 import com.expensehound.app.ui.screens.future_expenses.DeleteAlert
 import com.expensehound.app.ui.screens.new_expense.AddPurchaseItem
+import com.expensehound.app.ui.theme.margin_double
 import com.expensehound.app.ui.theme.margin_half
 import com.expensehound.app.ui.theme.margin_standard
 import com.expensehound.app.ui.theme.touchpoint
@@ -135,7 +137,7 @@ private fun ListItem(
                     )
                 }
                 Spacer(Modifier.width(margin_half))
-                Column {
+                Column(modifier = Modifier.width(175.dp)) {
                     Text(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -174,7 +176,7 @@ fun ListItemMainActionButtonsRow(
         if (!disableEdit) {
             Icon(
                 modifier = Modifier
-                    .size(touchpoint)
+                    .size(margin_double)
                     .fillMaxHeight()
                     .clickable {
                         purchaseIntent.value = true
@@ -193,12 +195,12 @@ fun ListItemMainActionButtonsRow(
 
         Icon(
             modifier = Modifier
-                .size(touchpoint)
+                .size(margin_double)
                 .fillMaxHeight()
                 .clickable { openDeleteDialog.value = true },
             painter = painterResource(id = R.drawable.ic_baseline_delete_forever_24),
             contentDescription = ".",
-            tint = MaterialTheme.colorScheme.outline
+            tint = MaterialTheme.colorScheme.onErrorContainer
         )
 
         DeleteAlert(openDeleteDialog, purchaseItem, purchaseItemsList)
@@ -213,7 +215,10 @@ fun ShowAddPurchaseItem(
     input: BasePurchaseItemInput,
     purchaseIntent: MutableState<Boolean>
 ) {
-    val transformOrigin = TransformOrigin(0.95f, 0.95f)
+    val isInputEmpty = input.text.value == ""
+
+    val animationOrigin = if (isInputEmpty) 0.95f else 0.50f
+    val transformOrigin = TransformOrigin(animationOrigin, animationOrigin)
     AnimatedVisibility(
         visible = isVisible,
         enter = scaleIn(
