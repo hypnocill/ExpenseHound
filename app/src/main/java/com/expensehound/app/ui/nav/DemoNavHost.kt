@@ -1,5 +1,7 @@
 package com.expensehound.app.ui.nav
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -22,11 +24,12 @@ val notFound = PurchaseItem(
     Random.nextInt(1000,1200),
     "Item Not Found",
     null,
-    null,
     Category.OTHERS,
-    0.0
+    0.0,
+    true
 )
 
+@RequiresApi(Build.VERSION_CODES.N)
 @ExperimentalMaterialNavigationApi
 @Composable
 fun DemoNavHost(

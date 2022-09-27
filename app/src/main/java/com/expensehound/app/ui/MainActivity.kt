@@ -3,6 +3,7 @@ package com.expensehound.app.ui
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -34,8 +35,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.plusAssign
 import com.expensehound.app.R
 import com.expensehound.app.data.PurchaseItem
-import com.expensehound.app.ui.nav.AppScreens
 import com.expensehound.app.ui.nav.AddNewPurchaseTopAppBar
+import com.expensehound.app.ui.nav.AppScreens
 import com.expensehound.app.ui.nav.BottomNavigation
 import com.expensehound.app.ui.nav.DemoNavHost
 import com.expensehound.app.ui.nav.DemoTopAppBar
@@ -44,7 +45,6 @@ import com.expensehound.app.ui.theme.ComposeTemplateTheme
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
-import kotlin.random.Random
 
 @ExperimentalMaterialNavigationApi
 class MainActivity : ComponentActivity() {
@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val demoViewModel = MainViewModel()
+        val demoViewModel = MainViewModel(this)
 
         setContent {
             App(demoViewModel)
@@ -63,8 +63,9 @@ class MainActivity : ComponentActivity() {
 
 }
 
+@RequiresApi(Build.VERSION_CODES.N)
 @OptIn(ExperimentalMaterial3Api::class)
-@Suppress("RestrictedApi") // has to do with NavController - check after updating this lib
+@Suppress("RestrictedApi")
 @ExperimentalMaterialNavigationApi
 @Composable
 fun App(demoViewModel: MainViewModel) {
@@ -101,6 +102,8 @@ fun App(demoViewModel: MainViewModel) {
                                 demoViewModel.purchasesList,
                                 demoViewModel.newPurchaseInput,
                                 context,
+                                demoViewModel,
+                                true
                             )
                         }
                     )
@@ -117,6 +120,8 @@ fun App(demoViewModel: MainViewModel) {
                                 demoViewModel.futurePurchasesList,
                                 demoViewModel.newFuturePurchaseInput,
                                 context,
+                                demoViewModel,
+                                false
                             )
                         }
                     )
@@ -139,6 +144,8 @@ fun onPurchaseInputSave(
     purchasesList: SnapshotStateList<PurchaseItem>,
     input: BasePurchaseItemInput,
     context: Context,
+    viewModel: MainViewModel,
+    isPurchased: Boolean
 ) {
     purchaseIntent.value = false
 
@@ -147,19 +154,24 @@ fun onPurchaseInputSave(
     ) {
         val newPurchaseItem =
             PurchaseItem(
-                input.id.value ?: Random.nextInt(20, 1000),
-                input.text.value,
-                input.image.value,
-                input.image.value.toString(),
-                input.selectedCategory.value,
-                input.price.value.toDouble()
+                name = input.text.value,
+                image = input.image.value,
+                category = input.selectedCategory.value,
+                price = input.price.value.toDouble(),
+                isPurchased = isPurchased
             )
 
         if (input.id.value != null) {
-            val editPurchaseItem = purchasesList.indexOfFirst { it.id == input.id.value }
-            purchasesList[editPurchaseItem] = newPurchaseItem
+            viewModel.updatePurchaseItemMainProperties(
+                input.id.value!!,
+                newPurchaseItem.name,
+                newPurchaseItem.image,
+                newPurchaseItem.category,
+                newPurchaseItem.price,
+                newPurchaseItem.comment
+            )
         } else {
-            purchasesList.add(0, newPurchaseItem)
+            viewModel.insertPurchaseItem(newPurchaseItem)
         }
 
         Toast.makeText(

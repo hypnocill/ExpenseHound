@@ -4,7 +4,6 @@ import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,7 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,7 +44,6 @@ import com.expensehound.app.ui.screens.all_expenses.ShowAddPurchaseItem
 import com.expensehound.app.ui.theme.margin_double
 import com.expensehound.app.ui.theme.margin_half
 import com.expensehound.app.ui.theme.margin_standard
-import com.expensehound.app.ui.theme.touchpoint
 import java.text.DecimalFormat
 import java.util.*
 
@@ -59,7 +56,6 @@ fun FutureExpensesScreen(
     onItemClicked: (PurchaseItem, Int) -> Unit,
     demoViewModel: MainViewModel,
 ) {
-    if (!demoViewModel.futurePurchasesList.isNullOrEmpty()) {
         Surface(color = MaterialTheme.colorScheme.background) {
             Column {
                 LazyColumn(
@@ -83,7 +79,7 @@ fun FutureExpensesScreen(
                 purchaseIntent = demoViewModel.newFuturePurchaseIntent
             )
         }
-    }
+
 }
 
 @RequiresApi(Build.VERSION_CODES.N)
@@ -102,7 +98,7 @@ private fun ListItem(
     val currentTime = Calendar.getInstance().timeInMillis
 
     var hasPendingNotification = false
-    val isConvertedToPurchase = purchaseItem.convertedAt != null
+    val isConvertedToPurchase = purchaseItem.isPurchased == true
 
     if (
         purchaseItem.notificationId != null
@@ -111,7 +107,7 @@ private fun ListItem(
     ) {
         hasPendingNotification = true
     }
-    Log.d("asd", "NEW")
+
     val notificationIconTint =
         if (hasPendingNotification) MaterialTheme.colorScheme.surfaceTint else MaterialTheme.colorScheme.outline
 
@@ -159,7 +155,7 @@ private fun ListItem(
                                 .fillMaxHeight()
                                 .clickable {
                                     val index =
-                                        viewModel.futurePurchasesList.indexOfFirst { it.id == purchaseItem.id };
+                                        viewModel.futurePurchasesList.indexOfFirst { it.uid == purchaseItem.uid };
 
                                     if (hasPendingNotification) {
                                         viewModel.futurePurchasesList[index] =
@@ -212,7 +208,7 @@ private fun ListItem(
                     purchaseIntent = viewModel.newFuturePurchaseIntent,
                     purchaseItemInput = viewModel.newFuturePurchaseInput,
                     purchaseItem = purchaseItem,
-                    purchaseItemsList = viewModel.futurePurchasesList,
+                    onDelete = { uid -> viewModel.deletePurchaseItem(uid)},
                     isConvertedToPurchase
                 )
 
@@ -250,18 +246,7 @@ fun ConvertFutureExpenseToExpenseAlert(
                 onClick = {
                     openDialog.value = false
 
-                    val futurePurchaseIndex = viewModel.futurePurchasesList.indexOfFirst { it.id == purchaseItem.id }
-                    val updatedPurchaseItem = purchaseItem.copy(
-                        convertedAt = Calendar.getInstance().time,
-                        notificationId = null,
-                        notificationTimestamp = null
-                    )
-                    viewModel.futurePurchasesList[futurePurchaseIndex] = updatedPurchaseItem
-
-                    viewModel.purchasesList.add(
-                        0,
-                        updatedPurchaseItem.copy(id = viewModel.purchasesList.lastIndex)
-                    )
+                    viewModel.updatePurchaseItemIsPurchased(purchaseItem.uid, true)
 
                     Toast.makeText(
                         context,
@@ -288,7 +273,7 @@ fun ConvertFutureExpenseToExpenseAlert(
 fun DeleteAlert(
     openDialog: MutableState<Boolean>,
     purchaseItem: PurchaseItem,
-    purchaseItemsList: SnapshotStateList<PurchaseItem>
+    onDelete: (uid: Int) -> Unit
 ) {
 
     val context = LocalContext.current
@@ -311,7 +296,7 @@ fun DeleteAlert(
             TextButton(
                 onClick = {
                     openDialog.value = false
-                    purchaseItemsList.removeIf { it.id == purchaseItem.id }
+                    onDelete(purchaseItem.uid)
 
                     Toast.makeText(
                         context,

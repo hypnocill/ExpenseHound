@@ -33,7 +33,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
@@ -50,7 +49,6 @@ import com.expensehound.app.ui.screens.new_expense.AddPurchaseItem
 import com.expensehound.app.ui.theme.margin_double
 import com.expensehound.app.ui.theme.margin_half
 import com.expensehound.app.ui.theme.margin_standard
-import com.expensehound.app.ui.theme.touchpoint
 import com.expensehound.app.ui.theme.touchpoint_lg
 import java.text.DecimalFormat
 
@@ -65,31 +63,29 @@ fun PurchasesScreen(
     onItemClicked: (PurchaseItem, Int) -> Unit,
     demoViewModel: MainViewModel,
 ) {
-    if (!demoViewModel.purchasesList.isNullOrEmpty()) {
-
-        Surface(color = MaterialTheme.colorScheme.background) {
-            Column {
-                LazyColumn(
-                    modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(top = margin_half)
-                ) {
-                    itemsIndexed(items = demoViewModel.purchasesList) { index, item ->
-                        ListItem(
-                            purchaseItem = item,
-                            onItemClicked = { onItemClicked(it, index) },
-                            modifier = Modifier.fillParentMaxWidth(),
-                            viewModel = demoViewModel
-                        )
-                    }
+    Surface(color = MaterialTheme.colorScheme.background) {
+        Column {
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                contentPadding = PaddingValues(top = margin_half)
+            ) {
+                itemsIndexed(items = demoViewModel.purchasesList) { index, item ->
+                    ListItem(
+                        purchaseItem = item,
+                        onItemClicked = { onItemClicked(it, index) },
+                        modifier = Modifier.fillParentMaxWidth(),
+                        viewModel = demoViewModel
+                    )
                 }
             }
-            ShowAddPurchaseItem(
-                isVisible = demoViewModel.newPurchaseIntent.value,
-                input = demoViewModel.newPurchaseInput,
-                purchaseIntent = demoViewModel.newPurchaseIntent
-            )
         }
+        ShowAddPurchaseItem(
+            isVisible = demoViewModel.newPurchaseIntent.value,
+            input = demoViewModel.newPurchaseInput,
+            purchaseIntent = demoViewModel.newPurchaseIntent
+        )
     }
+
 }
 
 @RequiresApi(Build.VERSION_CODES.N)
@@ -156,7 +152,7 @@ private fun ListItem(
                 purchaseIntent = viewModel.newPurchaseIntent,
                 purchaseItemInput = viewModel.newPurchaseInput,
                 purchaseItem = purchaseItem,
-                purchaseItemsList = viewModel.purchasesList
+                onDelete = {uid -> viewModel.deletePurchaseItem(uid) }
             )
         }
     }
@@ -169,7 +165,7 @@ fun ListItemMainActionButtonsRow(
     purchaseIntent: MutableState<Boolean>,
     purchaseItemInput: BasePurchaseItemInput,
     purchaseItem: PurchaseItem,
-    purchaseItemsList: SnapshotStateList<PurchaseItem>,
+    onDelete: (uid: Int) -> Unit,
     disableEdit: Boolean = false
 ) {
     Row {
@@ -180,7 +176,7 @@ fun ListItemMainActionButtonsRow(
                     .fillMaxHeight()
                     .clickable {
                         purchaseIntent.value = true
-                        purchaseItemInput.id.value = purchaseItem.id
+                        purchaseItemInput.id.value = purchaseItem.uid
                         purchaseItemInput.text.value = purchaseItem.name
                         purchaseItemInput.image.value = purchaseItem.image
                         purchaseItemInput.selectedCategory.value = purchaseItem.category
@@ -203,7 +199,7 @@ fun ListItemMainActionButtonsRow(
             tint = MaterialTheme.colorScheme.onErrorContainer
         )
 
-        DeleteAlert(openDeleteDialog, purchaseItem, purchaseItemsList)
+        DeleteAlert(openDeleteDialog, purchaseItem, onDelete)
     }
 }
 

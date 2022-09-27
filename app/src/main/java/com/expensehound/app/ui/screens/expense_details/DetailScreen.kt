@@ -68,7 +68,7 @@ fun DetailBody(
                 }
 
                 Box(modifier = Modifier.height(256.dp)) {
-                    (purchaseItem.image ?: purchaseItem.imageLarge).let {
+                    purchaseItem.image.let {
                         if (it == null) {
                             return@Box
                         }
