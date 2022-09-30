@@ -1,7 +1,6 @@
 package com.expensehound.app.ui.screens.future_expenses
 
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
@@ -35,6 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.expensehound.app.R
+import com.expensehound.app.data.FulfilledDesire
 import com.expensehound.app.data.PurchaseItem
 import com.expensehound.app.ui.MainViewModel
 import com.expensehound.app.ui.components.DateTimePicker
@@ -56,29 +56,29 @@ fun FutureExpensesScreen(
     onItemClicked: (PurchaseItem, Int) -> Unit,
     demoViewModel: MainViewModel,
 ) {
-        Surface(color = MaterialTheme.colorScheme.background) {
-            Column {
-                LazyColumn(
-                    modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(top = margin_half)
-                ) {
-                    itemsIndexed(items = demoViewModel.futurePurchasesList) { index, item ->
-                        ListItem(
-                            purchaseItem = item,
-                            onItemClicked = { onItemClicked(it, index) },
-                            modifier = Modifier.fillParentMaxWidth(),
-                            viewModel = demoViewModel,
-                        )
-                    }
+    Surface(color = MaterialTheme.colorScheme.background) {
+        Column {
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                contentPadding = PaddingValues(top = margin_half)
+            ) {
+                itemsIndexed(items = demoViewModel.futurePurchasesList) { index, item ->
+                    ListItem(
+                        purchaseItem = item,
+                        onItemClicked = { onItemClicked(it, index) },
+                        modifier = Modifier.fillParentMaxWidth(),
+                        viewModel = demoViewModel,
+                    )
                 }
             }
-
-            ShowAddPurchaseItem(
-                isVisible = demoViewModel.newFuturePurchaseIntent.value,
-                input = demoViewModel.newFuturePurchaseInput,
-                purchaseIntent = demoViewModel.newFuturePurchaseIntent
-            )
         }
+
+        ShowAddPurchaseItem(
+            isVisible = demoViewModel.newFuturePurchaseIntent.value,
+            input = demoViewModel.newFuturePurchaseInput,
+            purchaseIntent = demoViewModel.newFuturePurchaseIntent
+        )
+    }
 
 }
 
@@ -145,24 +145,17 @@ private fun ListItem(
                             .clickable { openConvertDialog.value = true },
                         painter = painterResource(id = R.drawable.ic_baseline_check_circle_24),
                         contentDescription = ".",
-                        tint = if (!isConvertedToPurchase) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.surfaceTint
+                        tint = MaterialTheme.colorScheme.outline
                     )
 
-                    if (!isConvertedToPurchase) {
                         Icon(
                             modifier = Modifier
                                 .size(margin_double)
                                 .fillMaxHeight()
                                 .clickable {
-                                    val index =
-                                        viewModel.futurePurchasesList.indexOfFirst { it.uid == purchaseItem.uid };
-
                                     if (hasPendingNotification) {
-                                        viewModel.futurePurchasesList[index] =
-                                            purchaseItem.copy(
-                                                notificationId = null,
-                                                notificationTimestamp = null
-                                            )
+                                        viewModel.updatePurchaseItemNotification(purchaseItem.uid, null, null)
+
                                         AppNotificationManager.cancelFuturePurchaseNotification(
                                             context,
                                             purchaseItem.notificationId!!
@@ -181,24 +174,22 @@ private fun ListItem(
                                                 it.timeInMillis,
                                                 purchaseItem
                                             )
-                                        viewModel.futurePurchasesList[index] =
-                                            purchaseItem.copy(
-                                                notificationId = notificationId,
-                                                notificationTimestamp = it.timeInMillis
-                                            )
 
-                                        Toast.makeText(
-                                            context,
-                                            "Успешно добавено известие за ${purchaseItem.name}",
-                                            Toast.LENGTH_LONG
-                                        ).show()
+                                        viewModel.updatePurchaseItemNotification(purchaseItem.uid, notificationId, it.timeInMillis)
+
+                                        Toast
+                                            .makeText(
+                                                context,
+                                                "Успешно добавено известие за ${purchaseItem.name}",
+                                                Toast.LENGTH_LONG
+                                            )
+                                            .show()
                                     }
                                 },
                             painter = painterResource(id = R.drawable.ic_baseline_notifications_24),
                             contentDescription = ".",
                             tint = notificationIconTint
                         )
-                    }
                 }
             }
 
@@ -208,8 +199,7 @@ private fun ListItem(
                     purchaseIntent = viewModel.newFuturePurchaseIntent,
                     purchaseItemInput = viewModel.newFuturePurchaseInput,
                     purchaseItem = purchaseItem,
-                    onDelete = { uid -> viewModel.deletePurchaseItem(uid)},
-                    isConvertedToPurchase
+                    onDelete = { uid -> viewModel.deletePurchaseItem(uid) }
                 )
 
                 ConvertFutureExpenseToExpenseAlert(openConvertDialog, purchaseItem, viewModel)
@@ -246,7 +236,16 @@ fun ConvertFutureExpenseToExpenseAlert(
                 onClick = {
                     openDialog.value = false
 
-                    viewModel.updatePurchaseItemIsPurchased(purchaseItem.uid, true)
+                    viewModel.updatePurchaseItemIsPurchased(purchaseItem.uid)
+                    viewModel.insertFulfilledDesire(
+                        FulfilledDesire(
+                            purchaseItemId = purchaseItem.uid,
+                            name = purchaseItem.name,
+                            price = purchaseItem.price,
+                            currency = purchaseItem.currency,
+                            category = purchaseItem.category
+                        )
+                    )
 
                     Toast.makeText(
                         context,

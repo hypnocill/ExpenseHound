@@ -13,4 +13,5 @@
     <string name="comment">Коментар</string>
     <string name="detail_screen">Detail Screen</string>
     <string name="stats">Статистики</string>
+    <string name="stats_expenses">Общо разходи:</string>
 </resources>

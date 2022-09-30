@@ -10,12 +10,6 @@ import java.util.*
 // move entities to separate classes
 @Entity(
     tableName = "purchase_items",
-    foreignKeys = [ForeignKey(
-        entity = Notifications::class,
-        parentColumns = arrayOf("uid"),
-        childColumns = arrayOf("notification_id"),
-        onDelete = ForeignKey.CASCADE
-    )]
 )
 data class PurchaseItem(
     @PrimaryKey(autoGenerate = true) var uid: Int = 0,
@@ -29,11 +23,42 @@ data class PurchaseItem(
     @ColumnInfo(name = "notification_id") val notificationId: Int? = null,
     @ColumnInfo(name = "notification_timestamp") val notificationTimestamp: Long? = null,
 )
+
 // Currently not used
-@Entity(tableName = "notifications")
+@Entity(
+    tableName = "notifications",
+    foreignKeys = [ForeignKey(
+        entity = PurchaseItem::class,
+        parentColumns = arrayOf("uid"),
+        childColumns = arrayOf("purchase_item_id"),
+        onDelete = ForeignKey.CASCADE
+    )]
+)
 data class Notifications(
     @PrimaryKey(autoGenerate = true) var uid: Int = 0,
+    @ColumnInfo(name = "purchase_item_id") var purchaseItemId: Int,
     @ColumnInfo(name = "timestamp") var timestamp: Long,
+)
+
+// extract to new files
+// There's data duplication and loose reference purchaseItemId because the purchase item could be deleted/edited
+// but the fulfilled desire should remain
+@Entity(
+    tableName = "fulfilled_desires",
+)
+data class FulfilledDesire(
+    @PrimaryKey(autoGenerate = true) var uid: Int = 0,
+    @ColumnInfo(name = "purchase_item_id") var purchaseItemId: Int,
+    @ColumnInfo(name = "name") var name: String,
+    @ColumnInfo(name = "price") val price: Double,
+    @ColumnInfo(name = "category") val category: Category,
+    @ColumnInfo(name = "currency") val currency: Currency = Currency.BGN,
+)
+
+data class StatsPurchaseItemsByCategory(
+    @ColumnInfo(name = "count") val count: Int,
+    @ColumnInfo(name = "category") val category: Category,
+    @ColumnInfo(name = "sum_price") val sumPrice: Double
 )
 
 enum class Currency(val displayName: String) {
@@ -43,6 +68,7 @@ enum class Currency(val displayName: String) {
 }
 
 enum class Category(val displayName: String) {
+    OTHERS("Друго"),
     BILLS("Сметки"),
     FOOD("Храна"),
     RENT("Наем"),
@@ -51,6 +77,5 @@ enum class Category(val displayName: String) {
     INVESTMENT("Инвестиции"),
     HEALTH("Здраве"),
     REPAIRS("Поддържка и ремонт"),
-    OTHERS("Друго")
 }
 

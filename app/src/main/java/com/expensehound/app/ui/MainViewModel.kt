@@ -7,12 +7,15 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.expensehound.app.data.Category
+import com.expensehound.app.data.FulfilledDesire
 import com.expensehound.app.data.PurchaseItem
+import com.expensehound.app.data.repository.FulfilledDesireRepository
 
 import com.expensehound.app.data.repository.PurchaseRepository
 
 class MainViewModel(context: Context) : ViewModel() {
     private val repository = PurchaseRepository(context)
+    private val fulfilledDesireRepository = FulfilledDesireRepository(context)
 
     var purchasesList = mutableStateListOf<PurchaseItem>()
     var futurePurchasesList = mutableStateListOf<PurchaseItem>()
@@ -35,8 +38,14 @@ class MainViewModel(context: Context) : ViewModel() {
         repository.deletePurchaseItem(uid)
     }
 
-    fun updatePurchaseItemIsPurchased(uid: Int, isPurchased: Boolean) {
-        repository.updatePurchaseItemIsPurchased(uid, isPurchased)
+    fun updatePurchaseItemIsPurchased(uid: Int) {
+        repository.updatePurchaseItemIsPurchased(uid, true)
+    }
+
+    fun updatePurchaseItemNotification(
+        uid: Int, notificationId: Int?, notificationTimestamp: Long?
+    ) {
+        repository.updatePurchaseItemNotification(uid, notificationId, notificationTimestamp)
     }
 
     fun updatePurchaseItemMainProperties(
@@ -59,6 +68,10 @@ class MainViewModel(context: Context) : ViewModel() {
 
     fun insertPurchaseItem(purchaseItem: PurchaseItem) {
         repository.insertPurchaseItem(purchaseItem)
+    }
+
+    fun insertFulfilledDesire(fulfilledDesire: FulfilledDesire) {
+        fulfilledDesireRepository.insert(fulfilledDesire)
     }
 }
 

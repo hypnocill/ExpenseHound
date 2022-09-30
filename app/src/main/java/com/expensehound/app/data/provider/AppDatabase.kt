@@ -1,24 +1,24 @@
 package com.expensehound.app.data.provider
 
 import android.content.Context
-import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.expensehound.app.data.Category
+import com.expensehound.app.data.FulfilledDesire
 import com.expensehound.app.data.Notifications
 import com.expensehound.app.data.PurchaseItem
 import java.util.concurrent.Executors
 
 private val IO_EXECUTOR = Executors.newSingleThreadExecutor()
 
-
-@Database(entities = [PurchaseItem::class, Notifications::class], version = 1)
+@Database(entities = [PurchaseItem::class, Notifications::class, FulfilledDesire::class], version = 1)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun purchaseItemDao(): PurchaseItemDao
+    abstract fun fulfilledDesireDao(): FulfilledDesireDao
 
     companion object {
         private var INSTANCE: AppDatabase? = null

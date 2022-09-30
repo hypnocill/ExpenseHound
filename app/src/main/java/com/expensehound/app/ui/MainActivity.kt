@@ -53,9 +53,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val demoViewModel = MainViewModel(this)
+        val statsViewModel = StatsViewModel(this)
 
         setContent {
-            App(demoViewModel)
+            App(demoViewModel, statsViewModel)
         }
 
         AppNotificationManager.createNotificationChannel(this)
@@ -68,7 +69,7 @@ class MainActivity : ComponentActivity() {
 @Suppress("RestrictedApi")
 @ExperimentalMaterialNavigationApi
 @Composable
-fun App(demoViewModel: MainViewModel) {
+fun App(demoViewModel: MainViewModel, statsViewModel: StatsViewModel) {
     ComposeTemplateTheme {
 
         val navScreens = listOf(
@@ -99,7 +100,6 @@ fun App(demoViewModel: MainViewModel) {
                         onSave = {
                             onPurchaseInputSave(
                                 demoViewModel.newPurchaseIntent,
-                                demoViewModel.purchasesList,
                                 demoViewModel.newPurchaseInput,
                                 context,
                                 demoViewModel,
@@ -117,7 +117,6 @@ fun App(demoViewModel: MainViewModel) {
                         onSave = {
                             onPurchaseInputSave(
                                 demoViewModel.newFuturePurchaseIntent,
-                                demoViewModel.futurePurchasesList,
                                 demoViewModel.newFuturePurchaseInput,
                                 context,
                                 demoViewModel,
@@ -132,7 +131,8 @@ fun App(demoViewModel: MainViewModel) {
                 DemoNavHost(
                     navController = navController,
                     demoViewModel,
-                    modifier = Modifier.padding(innerPadding)
+                    modifier = Modifier.padding(innerPadding),
+                    statsViewModel
                 )
             }
         }
@@ -141,7 +141,6 @@ fun App(demoViewModel: MainViewModel) {
 
 fun onPurchaseInputSave(
     purchaseIntent: MutableState<Boolean>,
-    purchasesList: SnapshotStateList<PurchaseItem>,
     input: BasePurchaseItemInput,
     context: Context,
     viewModel: MainViewModel,
@@ -158,7 +157,8 @@ fun onPurchaseInputSave(
                 image = input.image.value,
                 category = input.selectedCategory.value,
                 price = input.price.value.toDouble(),
-                isPurchased = isPurchased
+                isPurchased = isPurchased,
+                comment = input.comment.value
             )
 
         if (input.id.value != null) {

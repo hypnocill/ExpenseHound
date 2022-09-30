@@ -7,7 +7,11 @@ import androidx.room.Insert
 import androidx.room.Query
 import com.expensehound.app.data.Category
 import com.expensehound.app.data.PurchaseItem
+import com.expensehound.app.data.StatsPurchaseItemsByCategory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 @Dao
 interface PurchaseItemDao {
@@ -16,6 +20,9 @@ interface PurchaseItemDao {
 
     @Query("SELECT * FROM purchase_items WHERE is_purchased=1")
     fun getAllPurchaseItems(): Flow<List<PurchaseItem>>
+
+    @Query("SELECT category, SUM(price) as sum_price, COUNT(*) as count FROM purchase_items WHERE is_purchased=1 GROUP BY category ORDER BY COUNT(*) DESC")
+    fun getPurchaseItemsGroupedByCategory():  Flow<List<StatsPurchaseItemsByCategory>>
 
     @Query("SELECT * FROM purchase_items WHERE is_purchased=0")
     fun getAllFuturePurchaseItems(): Flow<List<PurchaseItem>>
@@ -44,4 +51,7 @@ interface PurchaseItemDao {
         price: Double,
         comment: String?
     )
+
+    @Query("UPDATE purchase_items SET notification_id=:notificationId, notification_timestamp=:notificationTimestamp where uid=:uid")
+    fun updatePurchaseItemNotification(uid: Int, notificationId: Int?, notificationTimestamp: Long?)
 }

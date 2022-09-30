@@ -82,7 +82,7 @@ class AppNotificationManager {
                 context.getSystemService(ComponentActivity.ALARM_SERVICE) as AlarmManager
 
             val thuReq: Long = Calendar.getInstance().timeInMillis + 1
-            var notificationId = thuReq.toInt()
+            var notificationId = thuReq.toInt() * -1
 
             val intent = Intent(context, AlarmReceiver::class.java)
 
