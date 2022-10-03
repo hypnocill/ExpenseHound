@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.expensehound.app.data.FulfilledDesire
+import com.expensehound.app.data.entity.FulfilledDesire
 import kotlinx.coroutines.flow.Flow
 
 @Dao

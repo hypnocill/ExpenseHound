@@ -1,4 +1,4 @@
-package com.expensehound.app.ui
+package com.expensehound.app.ui.viewmodel
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -6,9 +6,9 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.expensehound.app.data.Category
-import com.expensehound.app.data.FulfilledDesire
-import com.expensehound.app.data.PurchaseItem
+import com.expensehound.app.data.entity.Category
+import com.expensehound.app.data.entity.FulfilledDesire
+import com.expensehound.app.data.entity.PurchaseItem
 import com.expensehound.app.data.repository.FulfilledDesireRepository
 
 import com.expensehound.app.data.repository.PurchaseRepository

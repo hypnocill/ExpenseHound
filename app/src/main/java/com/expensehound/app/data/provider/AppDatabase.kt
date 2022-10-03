@@ -6,15 +6,13 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.expensehound.app.data.Category
-import com.expensehound.app.data.FulfilledDesire
-import com.expensehound.app.data.Notifications
-import com.expensehound.app.data.PurchaseItem
+import com.expensehound.app.data.entity.FulfilledDesire
+import com.expensehound.app.data.entity.PurchaseItem
 import java.util.concurrent.Executors
 
 private val IO_EXECUTOR = Executors.newSingleThreadExecutor()
 
-@Database(entities = [PurchaseItem::class, Notifications::class, FulfilledDesire::class], version = 1)
+@Database(entities = [PurchaseItem::class, FulfilledDesire::class], version = 1)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun purchaseItemDao(): PurchaseItemDao
@@ -43,47 +41,7 @@ abstract class AppDatabase : RoomDatabase() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)
                     ioThread {
-                        val purchaseItems = getInstance(context).purchaseItemDao()
-                        purchaseItems.insert(
-                            PurchaseItem(
-                                1,
-                                "Кафе",
-                                null,
-                                Category.FUN,
-                                30.54,
-                                isPurchased = true
-                            )
-                        )
-                        purchaseItems.insert(
-                            PurchaseItem(
-                                2,
-                                "Квартира",
-                                null,
-                                Category.FUN,
-                                10.0,
-                                isPurchased = true
-                            )
-                        )
-                        purchaseItems.insert(
-                            PurchaseItem(
-                                3,
-                                "Кюфтета",
-                                null,
-                                Category.FUN,
-                                5.0,
-                                isPurchased = true
-                            )
-                        )
-                        purchaseItems.insert(
-                            PurchaseItem(
-                                4,
-                                "Пуловер Декатлон",
-                                null,
-                                Category.FUN,
-                                25.0,
-                                isPurchased = false
-                            )
-                        )
+                        // Seeding is currently not needed
                     }
                 }
             }

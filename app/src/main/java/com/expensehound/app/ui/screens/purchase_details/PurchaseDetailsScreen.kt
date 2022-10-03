@@ -1,6 +1,7 @@
-package com.expensehound.app.ui.screens.expense_details
+package com.expensehound.app.ui.screens.purchase_details
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,15 +28,15 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.expensehound.app.R
-import com.expensehound.app.data.PurchaseItem
-import com.expensehound.app.ui.screens.all_expenses.df
+import com.expensehound.app.data.entity.PurchaseItem
+import com.expensehound.app.ui.screens.purchases.df
 import com.expensehound.app.ui.theme.ComposeTemplateTheme
 import com.expensehound.app.ui.theme.card_corner_radius_lg
 import com.expensehound.app.ui.theme.margin_double
 import com.expensehound.app.ui.theme.margin_standard
 
 @Composable
-fun DetailBody(
+fun PurchaseDetailsScreen(
     purchaseItem: PurchaseItem,
 ) {
     val clipboardManager: androidx.compose.ui.platform.ClipboardManager =
@@ -57,11 +58,28 @@ fun DetailBody(
                     contentDescription = "Drag Sheet",
                 )
 
-                Text(
-                    text = purchaseItem.name,
-                    style = MaterialTheme.typography.displayLarge,
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(top = margin_standard)
-                )
+                ) {
+                    Text(
+                        text = purchaseItem.name,
+                        style = MaterialTheme.typography.displayLarge,
+                        modifier = Modifier.fillMaxWidth(0.6f)
+                    )
+
+                    IconButton(onClick = {
+                        val comment = if( purchaseItem.comment != "" ) "  (${purchaseItem.comment})" else ""
+                        clipboardManager.setText(AnnotatedString(purchaseItem.name + ", " + purchaseItem.price.toString() + purchaseItem.currency.displayName + comment))
+                    }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_content_copy_24),
+                            contentDescription = ".",
+                            tint = MaterialTheme.colorScheme.outline
+                        )
+                    }
+                }
 
                 Row(modifier = Modifier.padding(bottom = margin_standard)) {
                     Text(
@@ -93,15 +111,6 @@ fun DetailBody(
                             text = purchaseItem.comment,
                             style = MaterialTheme.typography.bodyLarge,
                         )
-                        IconButton(onClick = {
-                            clipboardManager.setText(AnnotatedString(purchaseItem.comment))
-                        }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_baseline_content_copy_24),
-                                contentDescription = ".",
-                                tint = MaterialTheme.colorScheme.outline
-                            )
-                        }
                     }
                 }
                 // This is to give the bottom sheet some room to scroll to fill height

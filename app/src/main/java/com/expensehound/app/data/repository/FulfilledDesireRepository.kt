@@ -2,7 +2,7 @@ package com.expensehound.app.data.repository
 
 import android.content.Context
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import com.expensehound.app.data.FulfilledDesire
+import com.expensehound.app.data.entity.FulfilledDesire
 import com.expensehound.app.data.provider.AppDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

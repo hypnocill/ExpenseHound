@@ -5,24 +5,21 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.expensehound.app.data.Category
-import com.expensehound.app.data.PurchaseItem
-import com.expensehound.app.data.StatsPurchaseItemsByCategory
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.expensehound.app.data.entity.Category
+import com.expensehound.app.data.entity.PurchaseItem
+import com.expensehound.app.data.entity.StatsPurchaseItemsByCategory
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 
 @Dao
 interface PurchaseItemDao {
     @Query("SELECT * FROM purchase_items")
     fun getAll(): Flow<List<PurchaseItem>>
 
-    @Query("SELECT * FROM purchase_items WHERE is_purchased=1")
+    @Query("SELECT * FROM purchase_items WHERE is_purchased=1 ORDER BY uid DESC")
     fun getAllPurchaseItems(): Flow<List<PurchaseItem>>
 
-    @Query("SELECT category, SUM(price) as sum_price, COUNT(*) as count FROM purchase_items WHERE is_purchased=1 GROUP BY category ORDER BY COUNT(*) DESC")
-    fun getPurchaseItemsGroupedByCategory():  Flow<List<StatsPurchaseItemsByCategory>>
+    @Query("SELECT category, SUM(price) as sum_price, COUNT(*) as count FROM purchase_items WHERE is_purchased=1 GROUP BY category ORDER BY sum_price DESC")
+    fun getPurchaseItemsGroupedByCategory(): Flow<List<StatsPurchaseItemsByCategory>>
 
     @Query("SELECT * FROM purchase_items WHERE is_purchased=0")
     fun getAllFuturePurchaseItems(): Flow<List<PurchaseItem>>

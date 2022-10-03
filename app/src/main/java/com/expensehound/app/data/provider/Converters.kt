@@ -3,7 +3,6 @@ package com.expensehound.app.data.provider
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.room.TypeConverter
-import com.expensehound.app.data.Category
 import java.io.ByteArrayOutputStream
 
 class Converters {

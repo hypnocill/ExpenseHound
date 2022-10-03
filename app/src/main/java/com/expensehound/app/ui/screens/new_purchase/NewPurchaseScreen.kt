@@ -1,4 +1,4 @@
-package com.expensehound.app.ui.screens.new_expense
+package com.expensehound.app.ui.screens.new_purchase
 
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -52,15 +52,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.expensehound.app.R
-import com.expensehound.app.data.Category
-import com.expensehound.app.ui.BasePurchaseItemInput
-import com.expensehound.app.ui.resetNewPurchaseInput
+import com.expensehound.app.data.entity.Category
+import com.expensehound.app.ui.viewmodel.BasePurchaseItemInput
 import com.expensehound.app.ui.theme.margin_standard
+import com.expensehound.app.utils.resetNewPurchaseInput
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun AddPurchaseItem(input: BasePurchaseItemInput, purchaseIntent: MutableState<Boolean>) {
+fun NewPurchaseScreen(input: BasePurchaseItemInput, purchaseIntent: MutableState<Boolean>) {
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current

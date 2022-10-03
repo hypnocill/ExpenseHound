@@ -14,4 +14,8 @@
     <string name="detail_screen">Detail Screen</string>
     <string name="stats">Статистики</string>
     <string name="stats_expenses">Общо разходи:</string>
+    <string name="stats_expenses_by_categoy">Разходи по категории:</string>
+    <string name="stats_fulfilled_desires">Сбъднати желания</string>
+    <string name="stats_desires">Желания:</string>
+    <string name="stats_desires_text">Желания</string>
 </resources>

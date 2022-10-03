@@ -7,15 +7,13 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
 import androidx.core.app.AlarmManagerCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.expensehound.app.R
-import com.expensehound.app.data.PurchaseItem
+import com.expensehound.app.data.entity.PurchaseItem
 import java.util.*
 import kotlin.random.Random
 
