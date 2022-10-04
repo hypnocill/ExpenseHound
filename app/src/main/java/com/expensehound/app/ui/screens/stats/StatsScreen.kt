@@ -15,6 +15,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,40 +30,39 @@ import com.expensehound.app.R
 import com.expensehound.app.data.entity.FulfilledDesire
 import com.expensehound.app.data.entity.PurchaseItem
 import com.expensehound.app.data.entity.StatsPurchaseItemsByCategory
+import com.expensehound.app.ui.components.AppFilterChip
 import com.expensehound.app.ui.components.StatsLegendRow
 import com.expensehound.app.ui.screens.desires.df
 import com.expensehound.app.ui.theme.ComposeTemplateTheme
 import com.expensehound.app.ui.theme.card_corner_radius_lg
 import com.expensehound.app.ui.theme.margin_half
 import com.expensehound.app.ui.theme.margin_standard
+import com.expensehound.app.ui.viewmodel.MainViewModel
+import com.expensehound.app.ui.viewmodel.StatsViewModel
+import com.expensehound.app.utils.getStartOfMonthAsTimestamp
 import me.bytebeats.views.charts.pie.PieChart
 import me.bytebeats.views.charts.pie.PieChartData
 import me.bytebeats.views.charts.pie.render.SimpleSliceDrawer
 import me.bytebeats.views.charts.simpleChartAnimation
 
-interface FulfilledDesiresStatsLegendsRow {
-    val text: String
-    val color: Color
-}
-
 @Composable
-fun StatsScreen(
-    purchases: SnapshotStateList<StatsPurchaseItemsByCategory>,
-    fulfilledDesires: SnapshotStateList<FulfilledDesire>,
-    desires: SnapshotStateList<PurchaseItem>,
-) {
+fun StatsScreen(viewModel: MainViewModel, statsViewModel: StatsViewModel) {
+    var purchases = remember { mutableStateListOf<StatsPurchaseItemsByCategory>() }
+    var desires = remember { mutableStateListOf<PurchaseItem>() }
+    var fulfilledDesires = remember { mutableStateListOf<FulfilledDesire>() }
 
-    val COLORS = listOf(
-        MaterialTheme.colorScheme.outline,
-        MaterialTheme.colorScheme.tertiaryContainer,
-        MaterialTheme.colorScheme.surfaceTint,
-        MaterialTheme.colorScheme.outlineVariant,
-        MaterialTheme.colorScheme.tertiary,
-        MaterialTheme.colorScheme.onBackground,
-        MaterialTheme.colorScheme.inversePrimary,
-        MaterialTheme.colorScheme.secondaryContainer,
-        MaterialTheme.colorScheme.scrim,
-    )
+    LaunchedEffect(key1 = statsViewModel.statsFiltersMonth.value) {
+        var from: Long? = null
+
+        if (statsViewModel.statsFiltersMonth.value) {
+            from = getStartOfMonthAsTimestamp()
+        }
+
+        viewModel.newPurchaseIntent.value = false
+        viewModel.getAllDesires(desires, from)
+        statsViewModel.getAllPurchaseItemsGroupedByCategory(purchases, from)
+        statsViewModel.getAllFulfilledDesires(fulfilledDesires, from)
+    }
 
     var totalSumPrice = 0.0
     val fulfilledDesiresCount = fulfilledDesires.size
@@ -81,6 +84,12 @@ fun StatsScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End ) {
+                    AppFilterChip(stringResource(id = R.string.filters_current_month), statsViewModel.statsFiltersMonth.value) {
+                        statsViewModel.setStatsFilterMonth(!statsViewModel.statsFiltersMonth.value)
+                    }
+                }
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.Center,
@@ -110,7 +119,7 @@ fun StatsScreen(
                                 slices = purchases.mapIndexed { index, it ->
                                     PieChartData.Slice(
                                         value = it.sumPrice.toFloat(),
-                                        color = COLORS[index]
+                                        color = StatsColor(index)
                                     )
                                 }
 
@@ -133,7 +142,7 @@ fun StatsScreen(
                         val text =
                             "${it.category.displayName} (${it.count}) - ${df.format(it.sumPrice)}лв."
 
-                        StatsLegendRow(text, COLORS[index])
+                        StatsLegendRow(text, StatsColor(index))
                     }
                 }
 
@@ -160,11 +169,11 @@ fun StatsScreen(
                             listOf(
                                 PieChartData.Slice(
                                     value = desires.size.toFloat(),
-                                    color = COLORS[6]
+                                    color = StatsColor(6)
                                 ),
                                 PieChartData.Slice(
                                     value = fulfilledDesiresCount.toFloat(),
-                                    color = COLORS[7]
+                                    color = StatsColor(7)
                                 ),
                             )
                         ),
@@ -182,19 +191,40 @@ fun StatsScreen(
                         val desiresData = listOf(
                             object: FulfilledDesiresStatsLegendsRow {
                                 override val text = "${stringResource(id = R.string.stats_desires_text)}  (${desires.size})"
-                                override val color = COLORS[6]
+                                override val color = StatsColor(6) // TODO: Assign those hardcoded colors to variables
                             },
                             object: FulfilledDesiresStatsLegendsRow {
                                 override val text = "${stringResource(id = R.string.stats_fulfilled_desires)} (${fulfilledDesiresCount})"
-                                override val color = COLORS[7]
+                                override val color = StatsColor(7)
                             }
                         )
 
-                        desiresData.mapIndexed { index, it -> StatsLegendRow(it.text, it.color) }
+                        desiresData.mapIndexed { _, it -> StatsLegendRow(it.text, it.color) }
                     }
                 }
-
             }
         }
     }
+}
+
+interface FulfilledDesiresStatsLegendsRow {
+    val text: String
+    val color: Color
+}
+
+@Composable
+fun StatsColor(index: Int): Color {
+    val colors = listOf(
+        MaterialTheme.colorScheme.outline,
+        MaterialTheme.colorScheme.tertiaryContainer,
+        MaterialTheme.colorScheme.surfaceTint,
+        MaterialTheme.colorScheme.outlineVariant,
+        MaterialTheme.colorScheme.tertiary,
+        MaterialTheme.colorScheme.onBackground,
+        MaterialTheme.colorScheme.inversePrimary,
+        MaterialTheme.colorScheme.secondaryContainer,
+        MaterialTheme.colorScheme.scrim,
+    )
+
+    return colors[index]
 }

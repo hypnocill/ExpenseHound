@@ -3,8 +3,8 @@ package com.expensehound.app.ui.viewmodel
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import com.expensehound.app.data.entity.Category
 import com.expensehound.app.data.entity.FulfilledDesire
@@ -17,21 +17,38 @@ class MainViewModel(context: Context) : ViewModel() {
     private val repository = PurchaseRepository(context)
     private val fulfilledDesireRepository = FulfilledDesireRepository(context)
 
-    var purchasesList = mutableStateListOf<PurchaseItem>()
-    var futurePurchasesList = mutableStateListOf<PurchaseItem>()
-
     val newPurchaseInput: BasePurchaseItemInput
     var newPurchaseIntent = mutableStateOf(false)
 
     val newFuturePurchaseInput: BasePurchaseItemInput
     var newFuturePurchaseIntent = mutableStateOf(false)
 
-    init {
-        repository.getAllPurchaseItems(purchasesList)
-        repository.getAllFuturePurchaseItems(futurePurchasesList)
+    val purchasesFiltersMonth = mutableStateOf(true)
+    val desiresFiltersMonth = mutableStateOf(true)
 
+    init {
         newPurchaseInput = initBasePurchaseItemInput()
         newFuturePurchaseInput = initBasePurchaseItemInput()
+    }
+
+    fun setPurchaseFilterMonth(value: Boolean) {
+        purchasesFiltersMonth.value = value
+    }
+
+    fun setDesiresFilterMonth(value: Boolean) {
+        desiresFiltersMonth.value = value
+    }
+
+    fun getAllPurchaseItems(container: SnapshotStateList<PurchaseItem>, from: Long? = null, to: Long? = null) {
+        repository.getAllPurchaseItems(container, from, to)
+    }
+
+    fun getAllDesires(container: SnapshotStateList<PurchaseItem>, from: Long? = null, to: Long? = null) {
+        repository.getAllDesires(container, from, to)
+    }
+
+    fun getPurchaseItemById(uid: Int, container: SnapshotStateList<PurchaseItem>) {
+        repository.getPurchaseItemById(uid, container)
     }
 
     fun deletePurchaseItem(uid: Int) {

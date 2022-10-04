@@ -14,9 +14,9 @@ import kotlinx.coroutines.launch
 class PurchaseRepository(context: Context) {
     private val db = AppDatabase.getInstance(context)
 
-    fun getAllPurchaseItems(container: SnapshotStateList<PurchaseItem>) {
+    fun getAllPurchaseItems(container: SnapshotStateList<PurchaseItem>, from: Long? = null, to: Long? = null) {
         CoroutineScope(Dispatchers.IO).launch {
-            db.purchaseItemDao().getAllPurchaseItems().collect {
+            db.purchaseItemDao().getAllPurchaseItems(from, to).collect {
                 container.clear()
                 it.forEach { item ->
                     container.add(item)
@@ -25,9 +25,9 @@ class PurchaseRepository(context: Context) {
         }
     }
 
-    fun getAllPurchaseItemsGroupedByCategory(container: SnapshotStateList<StatsPurchaseItemsByCategory>) {
+    fun getAllPurchaseItemsGroupedByCategory(container: SnapshotStateList<StatsPurchaseItemsByCategory>, from: Long? = null, to: Long? = null) {
         CoroutineScope(Dispatchers.IO).launch {
-            db.purchaseItemDao().getPurchaseItemsGroupedByCategory().collect {
+            db.purchaseItemDao().getPurchaseItemsGroupedByCategory(from, to).collect {
                 container.clear()
                 it.forEach { item ->
                     container.add(item)
@@ -36,9 +36,20 @@ class PurchaseRepository(context: Context) {
         }
     }
 
-    fun getAllFuturePurchaseItems(container: SnapshotStateList<PurchaseItem>) {
+    fun getAllDesires(container: SnapshotStateList<PurchaseItem>, from: Long? = null, to: Long? = null) {
         CoroutineScope(Dispatchers.IO).launch {
-            db.purchaseItemDao().getAllFuturePurchaseItems().collect {
+            db.purchaseItemDao().getAllDesires(from, to).collect {
+                container.clear()
+                it.forEach { item ->
+                    container.add(item)
+                }
+            }
+        }
+    }
+
+    fun getPurchaseItemById(uid: Int, container: SnapshotStateList<PurchaseItem>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            db.purchaseItemDao().getById(uid).collect {
                 container.clear()
                 it.forEach { item ->
                     container.add(item)

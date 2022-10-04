@@ -19,6 +19,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -28,17 +31,27 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.expensehound.app.R
+import com.expensehound.app.data.entity.Category
+import com.expensehound.app.data.entity.Currency
 import com.expensehound.app.data.entity.PurchaseItem
 import com.expensehound.app.ui.screens.purchases.df
 import com.expensehound.app.ui.theme.ComposeTemplateTheme
 import com.expensehound.app.ui.theme.card_corner_radius_lg
 import com.expensehound.app.ui.theme.margin_double
 import com.expensehound.app.ui.theme.margin_standard
+import com.expensehound.app.ui.viewmodel.MainViewModel
 
 @Composable
 fun PurchaseDetailsScreen(
-    purchaseItem: PurchaseItem,
+    viewModel: MainViewModel,
+    uid: Int,
 ) {
+    var purchaseItems = remember { mutableStateListOf<PurchaseItem>() }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.getPurchaseItemById(uid, purchaseItems)
+    }
+
     val clipboardManager: androidx.compose.ui.platform.ClipboardManager =
         LocalClipboardManager.current
 
@@ -47,6 +60,20 @@ fun PurchaseDetailsScreen(
             color = MaterialTheme.colorScheme.background,
             shape = RoundedCornerShape(card_corner_radius_lg)
         ) {
+
+            val purchaseItem = if (purchaseItems.isNotEmpty()) purchaseItems.first()
+            else PurchaseItem(
+                -1,
+                "",
+                null,
+                Category.OTHERS,
+                0.00,
+                false,
+                "",
+                Currency.BGN,
+                createdAt = -1
+            )
+
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
@@ -70,7 +97,8 @@ fun PurchaseDetailsScreen(
                     )
 
                     IconButton(onClick = {
-                        val comment = if( purchaseItem.comment != "" ) "  (${purchaseItem.comment})" else ""
+                        val comment =
+                            if (purchaseItem.comment != "") "  (${purchaseItem.comment})" else ""
                         clipboardManager.setText(AnnotatedString(purchaseItem.name + ", " + purchaseItem.price.toString() + purchaseItem.currency.displayName + comment))
                     }) {
                         Icon(
@@ -92,17 +120,15 @@ fun PurchaseDetailsScreen(
                     )
                 }
 
-                if (purchaseItem.image != null) {
-                    Box(modifier = Modifier.height(256.dp)) {
-                        Image(
-                            painter = rememberAsyncImagePainter(
-                                model = purchaseItem.image
-                            ),
-                            contentDescription = purchaseItem.name,
-                            contentScale = ContentScale.FillHeight,
-                            modifier = Modifier.fillMaxHeight()
-                        )
-                    }
+                Box(modifier = Modifier.height(256.dp)) {
+                    Image(
+                        painter = rememberAsyncImagePainter(
+                            model = purchaseItem.image
+                        ),
+                        contentDescription = purchaseItem.name,
+                        contentScale = ContentScale.FillHeight,
+                        modifier = Modifier.fillMaxHeight()
+                    )
                 }
 
                 if (purchaseItem.comment != "") {
@@ -115,9 +141,9 @@ fun PurchaseDetailsScreen(
                 }
                 // This is to give the bottom sheet some room to scroll to fill height
                 Spacer(Modifier.height(512.dp))
-
-
             }
+
         }
     }
 }
+

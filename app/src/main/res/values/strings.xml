@@ -18,4 +18,5 @@
     <string name="stats_fulfilled_desires">Сбъднати желания</string>
     <string name="stats_desires">Желания:</string>
     <string name="stats_desires_text">Желания</string>
+    <string name="filters_current_month">Текущ месец</string>
 </resources>

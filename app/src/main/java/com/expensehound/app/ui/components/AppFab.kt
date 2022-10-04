@@ -2,7 +2,6 @@ package com.expensehound.app.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
@@ -11,35 +10,26 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.expensehound.app.R
-import com.expensehound.app.ui.viewmodel.MainViewModel
 import com.expensehound.app.ui.nav.AppScreens
+import com.expensehound.app.ui.viewmodel.MainViewModel
+import com.expensehound.app.utils.AppAnimationSpecs
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AppFab(navController: NavHostController, demoViewModel: MainViewModel) {
     val backstackEntry = navController.currentBackStackEntryAsState()
     var purchaseFabVisible = false
     var futurePurchaseFabVisible = false
 
-    if (backstackEntry.value?.destination?.route == AppScreens.HomeNav.route) {
-        purchaseFabVisible = true
-    }
-    if (backstackEntry.value?.destination?.route == AppScreens.Future.route) {
-        futurePurchaseFabVisible = true
+    when(backstackEntry.value?.destination?.route) {
+        AppScreens.HomeNav.route -> purchaseFabVisible = true
+        AppScreens.Future.route -> futurePurchaseFabVisible = true
     }
 
-    val transformOrigin = TransformOrigin(0.5f, 0.5f)
-
-    var onExitAnimation = scaleOut(
-        animationSpec = spring(dampingRatio = 1.5f),
-        transformOrigin = transformOrigin,
-    )
-
+    var exitOverrideWithScaleAndFade = false
 
     if (
         demoViewModel.newPurchaseIntent.value && demoViewModel.newPurchaseInput.text.value == ""
@@ -47,49 +37,56 @@ fun AppFab(navController: NavHostController, demoViewModel: MainViewModel) {
     ) {
         purchaseFabVisible = false
         futurePurchaseFabVisible = false
+        exitOverrideWithScaleAndFade = true
+    }
 
-        onExitAnimation = scaleOut(
+    AnimatedContainer(isVisible = purchaseFabVisible, exitOverrideWithScaleAndFade = exitOverrideWithScaleAndFade, onClick =  { demoViewModel.newPurchaseIntent.value = true })
+    AnimatedContainer(
+        isVisible = futurePurchaseFabVisible,
+        exitOverrideWithScaleAndFade = exitOverrideWithScaleAndFade,
+        onClick = { demoViewModel.newFuturePurchaseIntent.value = true })
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+fun AnimatedContainer(
+    isVisible: Boolean,
+    onClick: () -> Unit,
+    enterFromLowerRightCorner: Boolean = false,
+    exitToLowerRightCorner: Boolean = false,
+    exitOverrideWithScaleAndFade: Boolean = false
+) {
+    var enterAnimation = scaleIn(
+        animationSpec = spring(dampingRatio = AppAnimationSpecs.SPRING_DAMPING_RATIO),
+        transformOrigin = if (!enterFromLowerRightCorner) AppAnimationSpecs.TRANSFORM_ORIGIN_CENTER else AppAnimationSpecs.TRANSFORM_ORIGIN_LOWER_RIGHT_CORNER
+    )
+
+    var exitAnimation = scaleOut(
+        animationSpec = spring(dampingRatio = AppAnimationSpecs.SPRING_DAMPING_RATIO),
+        transformOrigin = if (!exitToLowerRightCorner) AppAnimationSpecs.TRANSFORM_ORIGIN_CENTER else AppAnimationSpecs.TRANSFORM_ORIGIN_LOWER_RIGHT_CORNER
+    )
+
+    if (exitOverrideWithScaleAndFade) {
+        exitAnimation = scaleOut(
             animationSpec = tween(
-                durationMillis = 200, easing = CubicBezierEasing(0.42f, 0.0f, 0.58f, 1.0f)
-            ), transformOrigin = TransformOrigin(0.95f, 0.95f), targetScale = 4f
+                durationMillis = AppAnimationSpecs.DURATION, easing = AppAnimationSpecs.CUBIC_EASING
+            ),
+            transformOrigin = AppAnimationSpecs.TRANSFORM_ORIGIN_LOWER_RIGHT_CORNER,
+            targetScale = 4f
         ) + fadeOut(
             animationSpec = tween(
-                durationMillis = 200, easing = CubicBezierEasing(0.42f, 0.0f, 0.58f, 1.0f)
+                durationMillis = AppAnimationSpecs.DURATION, easing = AppAnimationSpecs.CUBIC_EASING
             )
         )
     }
 
-    //Extract to function that accepts 'visible' and 'onClick'
     AnimatedVisibility(
-        visible = purchaseFabVisible,
-        enter = scaleIn(
-            animationSpec = spring(dampingRatio = 1.5f), transformOrigin = transformOrigin
-        ),
-        exit = onExitAnimation,
+        visible = isVisible,
+        enter = enterAnimation,
+        exit = exitAnimation,
     ) {
         LargeFloatingActionButton(
-            onClick = {
-                demoViewModel.newPurchaseIntent.value = true
-            },
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_add_24),
-                contentDescription = "FAB",
-            )
-        }
-    }
-
-    AnimatedVisibility(
-        visible = futurePurchaseFabVisible,
-        enter = scaleIn(
-            animationSpec = spring(dampingRatio = 1.5f), transformOrigin = transformOrigin
-        ),
-        exit = onExitAnimation,
-    ) {
-        LargeFloatingActionButton(
-            onClick = {
-                demoViewModel.newFuturePurchaseIntent.value = true
-            },
+            onClick = onClick,
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_baseline_add_24),

@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FulfilledDesireDao {
-    @Query("SELECT * FROM fulfilled_desires")
-    fun getAll(): Flow<List<FulfilledDesire>>
+    @Query("SELECT * FROM fulfilled_desires WHERE (:from IS NULL OR created_at >= :from) AND (:to IS NULL OR created_at <= :to)")
+    fun getAll(from: Long? = null, to: Long? = null): Flow<List<FulfilledDesire>>
 
     @Insert
     fun insert(fulfilledDesire: FulfilledDesire)

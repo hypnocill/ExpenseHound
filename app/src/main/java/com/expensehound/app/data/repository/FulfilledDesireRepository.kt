@@ -11,9 +11,9 @@ import kotlinx.coroutines.launch
 class FulfilledDesireRepository(context: Context) {
     private val db = AppDatabase.getInstance(context)
 
-    fun getAll(container: SnapshotStateList<FulfilledDesire>) {
+    fun getAll(container: SnapshotStateList<FulfilledDesire>, from: Long? = null, to: Long? = null) {
         CoroutineScope(Dispatchers.IO).launch {
-            db.fulfilledDesireDao().getAll().collect {
+            db.fulfilledDesireDao().getAll(from, to).collect {
                 container.clear()
                 it.forEach { item ->
                     container.add(item)

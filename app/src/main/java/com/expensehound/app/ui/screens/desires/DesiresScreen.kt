@@ -4,10 +4,12 @@ import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -18,15 +20,19 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.expensehound.app.R
 import com.expensehound.app.data.entity.FulfilledDesire
 import com.expensehound.app.data.entity.PurchaseItem
+import com.expensehound.app.ui.components.AppFilterChip
 import com.expensehound.app.ui.viewmodel.MainViewModel
 import com.expensehound.app.ui.components.DateTimePicker
 import com.expensehound.app.ui.components.NewPurchaseScreenAnimated
@@ -34,6 +40,7 @@ import com.expensehound.app.ui.components.PurchaseItemCard
 import com.expensehound.app.ui.notifications.AppNotificationManager
 import com.expensehound.app.ui.theme.margin_double
 import com.expensehound.app.ui.theme.margin_half
+import com.expensehound.app.utils.getStartOfMonthAsTimestamp
 import java.text.DecimalFormat
 import java.util.*
 
@@ -45,13 +52,31 @@ fun DesiresScreen(
     onItemClicked: (PurchaseItem, Int) -> Unit,
     viewModel: MainViewModel,
 ) {
+    var list = remember { mutableStateListOf<PurchaseItem>() }
+
+    LaunchedEffect(key1 = viewModel.desiresFiltersMonth.value) {
+        var from: Long? = null
+
+        if (viewModel.desiresFiltersMonth.value) {
+            from = getStartOfMonthAsTimestamp()
+        }
+
+        viewModel.getAllDesires(list, from)
+    }
+
     Surface(color = MaterialTheme.colorScheme.background) {
         Column {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End ) {
+                AppFilterChip(stringResource(id = R.string.filters_current_month), viewModel.desiresFiltersMonth.value) {
+                    viewModel.setDesiresFilterMonth(!viewModel.desiresFiltersMonth.value)
+                }
+            }
+
             LazyColumn(
                 modifier = Modifier.weight(1f),
                 contentPadding = PaddingValues(top = margin_half)
             ) {
-                itemsIndexed(items = viewModel.futurePurchasesList) { index, item ->
+                itemsIndexed(items = list) { index, item ->
                     PurchaseItemCard(
                         item,
                         viewModel.newFuturePurchaseIntent,
