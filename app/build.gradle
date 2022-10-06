@@ -112,6 +112,8 @@ dependencies {
     implementation "androidx.activity:activity-compose:$rootProject.activityComposeVersion"
     implementation "androidx.navigation:navigation-compose:$rootProject.composeNavigationVersion"
 
+    implementation "androidx.work:work-runtime-ktx:$rootProject.work_version"
+
     implementation('io.github.bytebeats:compose-charts:0.1.2')
 
     // Accompanist

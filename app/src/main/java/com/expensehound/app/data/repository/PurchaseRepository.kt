@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.expensehound.app.data.entity.Category
 import com.expensehound.app.data.entity.PurchaseItem
+import com.expensehound.app.data.entity.RecurringInterval
 import com.expensehound.app.data.entity.StatsPurchaseItemsByCategory
 import com.expensehound.app.data.provider.AppDatabase
 import kotlinx.coroutines.CoroutineScope
@@ -14,7 +15,11 @@ import kotlinx.coroutines.launch
 class PurchaseRepository(context: Context) {
     private val db = AppDatabase.getInstance(context)
 
-    fun getAllPurchaseItems(container: SnapshotStateList<PurchaseItem>, from: Long? = null, to: Long? = null) {
+    fun getAllPurchaseItems(
+        container: SnapshotStateList<PurchaseItem>,
+        from: Long? = null,
+        to: Long? = null
+    ) {
         CoroutineScope(Dispatchers.IO).launch {
             db.purchaseItemDao().getAllPurchaseItems(from, to).collect {
                 container.clear()
@@ -25,7 +30,11 @@ class PurchaseRepository(context: Context) {
         }
     }
 
-    fun getAllPurchaseItemsGroupedByCategory(container: SnapshotStateList<StatsPurchaseItemsByCategory>, from: Long? = null, to: Long? = null) {
+    fun getAllPurchaseItemsGroupedByCategory(
+        container: SnapshotStateList<StatsPurchaseItemsByCategory>,
+        from: Long? = null,
+        to: Long? = null
+    ) {
         CoroutineScope(Dispatchers.IO).launch {
             db.purchaseItemDao().getPurchaseItemsGroupedByCategory(from, to).collect {
                 container.clear()
@@ -36,7 +45,11 @@ class PurchaseRepository(context: Context) {
         }
     }
 
-    fun getAllDesires(container: SnapshotStateList<PurchaseItem>, from: Long? = null, to: Long? = null) {
+    fun getAllDesires(
+        container: SnapshotStateList<PurchaseItem>,
+        from: Long? = null,
+        to: Long? = null
+    ) {
         CoroutineScope(Dispatchers.IO).launch {
             db.purchaseItemDao().getAllDesires(from, to).collect {
                 container.clear()
@@ -76,19 +89,41 @@ class PurchaseRepository(context: Context) {
         }
     }
 
-    fun updatePurchaseItemNotification(uid: Int, notificationId: Int?, notificationTimestamp: Long?) {
+    fun updatePurchaseItemNotification(
+        uid: Int,
+        notificationId: Int?,
+        notificationTimestamp: Long?
+    ) {
         CoroutineScope(Dispatchers.IO).launch {
-            db.purchaseItemDao().updatePurchaseItemNotification(uid, notificationId, notificationTimestamp)
+            db.purchaseItemDao()
+                .updatePurchaseItemNotification(uid, notificationId, notificationTimestamp)
         }
     }
 
+    fun updatePurchaseItemRecurringInterval(
+        purchaseItem: PurchaseItem,
+        recurringInterval: RecurringInterval
+    ) {
+        updatePurchaseItemMainProperties(
+            purchaseItem.uid,
+            purchaseItem.name,
+            purchaseItem.image,
+            purchaseItem.category,
+            purchaseItem.price,
+            purchaseItem.comment,
+            recurringInterval
+        )
+    }
+
+    // Refactor this function so that all params are optional and there's no need to pass params that will not be updated
     fun updatePurchaseItemMainProperties(
         uid: Int,
         name: String,
         image: Bitmap?,
         category: Category,
         price: Double,
-        comment: String?
+        comment: String?,
+        recurringInterval: RecurringInterval
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             db.purchaseItemDao().updateMainProperties(
@@ -97,8 +132,15 @@ class PurchaseRepository(context: Context) {
                 image,
                 category,
                 price,
-                comment
+                comment,
+                recurringInterval
             )
         }
+    }
+
+    // SYNC
+
+    fun getAllWithRecurringIntervalSync(from: Long? = null, to: Long? = null): List<PurchaseItem> {
+        return db.purchaseItemDao().getAllWithRecurringIntervals(from, to)
     }
 }

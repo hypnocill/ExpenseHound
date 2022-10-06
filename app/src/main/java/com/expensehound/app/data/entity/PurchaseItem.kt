@@ -3,11 +3,9 @@ package com.expensehound.app.data.entity
 import android.graphics.Bitmap
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import java.util.*
 
-// Extract notification data to a separate table
+// ADD COLUMN TO INDICATE THAT IT WAS AUTOMATICALLY CREATED. Possible CREATED BY
 @Entity(
     tableName = "purchase_items",
 )
@@ -22,26 +20,8 @@ data class PurchaseItem(
     @ColumnInfo(name = "currency") val currency: Currency = Currency.BGN,
     @ColumnInfo(name = "notification_id") val notificationId: Int? = null,
     @ColumnInfo(name = "notification_timestamp") val notificationTimestamp: Long? = null,
-    @ColumnInfo(name = "created_at") val createdAt: Long
+    @ColumnInfo(name = "created_at") val createdAt: Long,
+    @ColumnInfo(name = "recurring_interval") var recurringInterval: RecurringInterval = com.expensehound.app.data.entity.RecurringInterval.NONE,
 )
 
-// The app currently works with LEV only
-enum class Currency(val displayName: String) {
-    BGN("лв."),
-    USD("$"),
-    EUR("EUR")
-}
-
-enum class Category(val displayName: String) {
-    OTHERS("Друго"),
-    CLOTHING("Облекло"),
-    BILLS("Сметки"),
-    FOOD("Храна"),
-    RENT("Наем"),
-    FUN("Забавление"),
-    EDUCATION("Образование"),
-    INVESTMENT("Инвестиции"),
-    HEALTH("Здраве"),
-    REPAIRS("Поддържка и ремонт"),
-}
 

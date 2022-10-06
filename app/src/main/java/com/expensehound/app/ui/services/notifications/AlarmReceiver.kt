@@ -1,4 +1,4 @@
-package com.expensehound.app.ui.notifications
+package com.expensehound.app.ui.services.notifications
 
 import android.app.PendingIntent
 import android.content.BroadcastReceiver

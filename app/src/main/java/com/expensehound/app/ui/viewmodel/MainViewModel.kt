@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import com.expensehound.app.data.entity.Category
 import com.expensehound.app.data.entity.FulfilledDesire
 import com.expensehound.app.data.entity.PurchaseItem
+import com.expensehound.app.data.entity.RecurringInterval
 import com.expensehound.app.data.repository.FulfilledDesireRepository
 
 import com.expensehound.app.data.repository.PurchaseRepository
@@ -39,11 +40,19 @@ class MainViewModel(context: Context) : ViewModel() {
         desiresFiltersMonth.value = value
     }
 
-    fun getAllPurchaseItems(container: SnapshotStateList<PurchaseItem>, from: Long? = null, to: Long? = null) {
+    fun getAllPurchaseItems(
+        container: SnapshotStateList<PurchaseItem>,
+        from: Long? = null,
+        to: Long? = null
+    ) {
         repository.getAllPurchaseItems(container, from, to)
     }
 
-    fun getAllDesires(container: SnapshotStateList<PurchaseItem>, from: Long? = null, to: Long? = null) {
+    fun getAllDesires(
+        container: SnapshotStateList<PurchaseItem>,
+        from: Long? = null,
+        to: Long? = null
+    ) {
         repository.getAllDesires(container, from, to)
     }
 
@@ -71,7 +80,8 @@ class MainViewModel(context: Context) : ViewModel() {
         image: Bitmap?,
         category: Category,
         price: Double,
-        comment: String?
+        comment: String?,
+        recurringInterval: RecurringInterval
     ) {
         repository.updatePurchaseItemMainProperties(
             uid,
@@ -79,7 +89,8 @@ class MainViewModel(context: Context) : ViewModel() {
             image,
             category,
             price,
-            comment
+            comment,
+            recurringInterval
         )
     }
 
@@ -102,6 +113,8 @@ fun initBasePurchaseItemInput(): BasePurchaseItemInput {
         override var image: MutableState<Bitmap?> =
             mutableStateOf(PurchaseItemInputInitialValues.image)
         override var comment = mutableStateOf(PurchaseItemInputInitialValues.comment)
+        override var recurringInterval: MutableState<RecurringInterval> =
+            mutableStateOf(PurchaseItemInputInitialValues.recurringInterval)
     }
 }
 
@@ -112,6 +125,7 @@ interface BasePurchaseItemInput {
     var selectedCategory: MutableState<Category>
     var image: MutableState<Bitmap?>
     var comment: MutableState<String>
+    var recurringInterval: MutableState<RecurringInterval>
 }
 
 object PurchaseItemInputInitialValues {
@@ -119,6 +133,7 @@ object PurchaseItemInputInitialValues {
     val text = ""
     val price = ""
     val image = null
-    val selectedCategory = Category.values()[0]
+    val selectedCategory = Category.OTHERS
     val comment = ""
+    val recurringInterval = RecurringInterval.NONE
 }

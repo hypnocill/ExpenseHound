@@ -13,6 +13,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.graphics.TransformOrigin
 import com.expensehound.app.ui.screens.new_purchase.NewPurchaseScreen
 import com.expensehound.app.ui.viewmodel.BasePurchaseItemInput
+import com.expensehound.app.utils.AppAnimationSpecs
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -29,12 +30,12 @@ fun NewPurchaseScreenAnimated(
         visible = isVisible,
         enter = scaleIn(
             animationSpec = tween(
-                durationMillis = 200, easing = CubicBezierEasing(0.42f, 0.0f, 0.58f, 1.0f)
+                durationMillis = AppAnimationSpecs.DURATION, easing = AppAnimationSpecs.CUBIC_EASING
             ), transformOrigin = transformOrigin
         ) + fadeIn(),
         exit = scaleOut(
             animationSpec = tween(
-                durationMillis = 200, easing = CubicBezierEasing(0.42f, 0.0f, 0.58f, 1.0f)
+                durationMillis = AppAnimationSpecs.DURATION, easing = AppAnimationSpecs.CUBIC_EASING
             ),
             transformOrigin = transformOrigin,
         ) + fadeOut(),

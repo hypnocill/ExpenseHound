@@ -28,7 +28,8 @@ fun onPurchaseInputSave(
                 price = input.price.value.toDouble(),
                 isPurchased = isPurchased,
                 comment = input.comment.value,
-                createdAt = System.currentTimeMillis()
+                createdAt = System.currentTimeMillis(),
+                recurringInterval = input.recurringInterval.value
             )
 
         if (input.id.value != null) {
@@ -38,7 +39,8 @@ fun onPurchaseInputSave(
                 newPurchaseItem.image,
                 newPurchaseItem.category,
                 newPurchaseItem.price,
-                newPurchaseItem.comment
+                newPurchaseItem.comment,
+                newPurchaseItem.recurringInterval
             )
         } else {
             viewModel.insertPurchaseItem(newPurchaseItem)
@@ -61,4 +63,5 @@ fun resetNewPurchaseInput(item: BasePurchaseItemInput) {
     item.selectedCategory.value = PurchaseItemInputInitialValues.selectedCategory
     item.image.value = PurchaseItemInputInitialValues.image
     item.comment.value = PurchaseItemInputInitialValues.comment
+    item.recurringInterval.value = PurchaseItemInputInitialValues.recurringInterval
 }

@@ -1,5 +1,6 @@
 package com.expensehound.app.utils
 
+import java.text.SimpleDateFormat
 import java.util.*
 
 fun getStartOfMonthAsTimestamp(): Long {
@@ -7,4 +8,22 @@ fun getStartOfMonthAsTimestamp(): Long {
     c.set(Calendar.DAY_OF_MONTH, 1);
 
     return c.timeInMillis
+}
+
+fun convertTimestampToDatetimeString(timestamp: Long): String {
+    val simpleDate = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
+
+    return simpleDate.format(timestamp) ?: ""
+}
+
+fun isMonday(): Boolean {
+    val calendar = Calendar.getInstance();
+    val day = calendar.get(Calendar.DAY_OF_WEEK);
+
+    return day == Calendar.MONDAY
+}
+
+fun isFirstDayOfMonth(): Boolean {
+    val calendar = Calendar.getInstance();
+    return calendar.get(Calendar.DAY_OF_MONTH) == 1
 }

@@ -12,7 +12,7 @@ buildscript {
         // App dependencies
         appCompatVersion = '1.4.1'
         activityComposeVersion = '1.6.0-alpha03'
-            composeVersion = '1.2.0-beta03'
+        composeVersion = '1.2.0-beta03'
         composeNavigationVersion = '2.5.0-rc01'
         coreTestingVersion = '2.1.0'
         espressoVersion = '3.4.0'
@@ -27,6 +27,7 @@ buildscript {
         testExtJunit = '1.1.2'
         uiAutomatorVersion = '2.2.0'
         room_version = "2.4.3"
+        work_version = "2.7.1"
     }
 
     repositories {

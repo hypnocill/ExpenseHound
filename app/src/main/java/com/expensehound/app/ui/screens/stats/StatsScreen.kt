@@ -23,13 +23,17 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.expensehound.app.R
+import com.expensehound.app.data.entity.Currency
 import com.expensehound.app.data.entity.FulfilledDesire
 import com.expensehound.app.data.entity.PurchaseItem
 import com.expensehound.app.data.entity.StatsPurchaseItemsByCategory
+import com.expensehound.app.data.entity.getCategoryString
+import com.expensehound.app.data.entity.getCurrencyString
 import com.expensehound.app.ui.components.AppFilterChip
 import com.expensehound.app.ui.components.StatsLegendRow
 import com.expensehound.app.ui.screens.desires.df
@@ -47,6 +51,7 @@ import me.bytebeats.views.charts.simpleChartAnimation
 
 @Composable
 fun StatsScreen(viewModel: MainViewModel, statsViewModel: StatsViewModel) {
+    val context = LocalContext.current
     var purchases = remember { mutableStateListOf<StatsPurchaseItemsByCategory>() }
     var desires = remember { mutableStateListOf<PurchaseItem>() }
     var fulfilledDesires = remember { mutableStateListOf<FulfilledDesire>() }
@@ -96,7 +101,7 @@ fun StatsScreen(viewModel: MainViewModel, statsViewModel: StatsViewModel) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(text = stringResource(id = R.string.stats_expenses))
-                    Text(text = df.format(totalSumPrice) + "лв.", fontSize = 35.sp)
+                    Text(text = df.format(totalSumPrice) + getCurrencyString(context, Currency.BGN), fontSize = 35.sp)
                 }
 
                 Divider(
@@ -140,7 +145,7 @@ fun StatsScreen(viewModel: MainViewModel, statsViewModel: StatsViewModel) {
                 ) {
                     purchases.mapIndexed { index, it ->
                         val text =
-                            "${it.category.displayName} (${it.count}) - ${df.format(it.sumPrice)}лв."
+                            "${getCategoryString(context, it.category)} (${it.count}) - ${df.format(it.sumPrice)}лв."
 
                         StatsLegendRow(text, StatsColor(index))
                     }
@@ -169,11 +174,11 @@ fun StatsScreen(viewModel: MainViewModel, statsViewModel: StatsViewModel) {
                             listOf(
                                 PieChartData.Slice(
                                     value = desires.size.toFloat(),
-                                    color = StatsColor(6)
+                                    color = StatsColor(STATS_COLOR_PRIMARY_INDEX)
                                 ),
                                 PieChartData.Slice(
                                     value = fulfilledDesiresCount.toFloat(),
-                                    color = StatsColor(7)
+                                    color = StatsColor(STATS_COLOR_SECONDARY_INDEX)
                                 ),
                             )
                         ),
@@ -191,11 +196,11 @@ fun StatsScreen(viewModel: MainViewModel, statsViewModel: StatsViewModel) {
                         val desiresData = listOf(
                             object: FulfilledDesiresStatsLegendsRow {
                                 override val text = "${stringResource(id = R.string.stats_desires_text)}  (${desires.size})"
-                                override val color = StatsColor(6) // TODO: Assign those hardcoded colors to variables
+                                override val color = StatsColor(STATS_COLOR_PRIMARY_INDEX)
                             },
                             object: FulfilledDesiresStatsLegendsRow {
                                 override val text = "${stringResource(id = R.string.stats_fulfilled_desires)} (${fulfilledDesiresCount})"
-                                override val color = StatsColor(7)
+                                override val color = StatsColor(STATS_COLOR_SECONDARY_INDEX)
                             }
                         )
 
@@ -211,6 +216,9 @@ interface FulfilledDesiresStatsLegendsRow {
     val text: String
     val color: Color
 }
+
+val STATS_COLOR_PRIMARY_INDEX = 6;
+val STATS_COLOR_SECONDARY_INDEX = 7;
 
 @Composable
 fun StatsColor(index: Int): Color {

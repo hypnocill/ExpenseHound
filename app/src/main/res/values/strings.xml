@@ -11,6 +11,7 @@
     <string name="name">Име</string>
     <string name="price">Цена</string>
     <string name="comment">Коментар</string>
+    <string name="created_at">Добавено на:</string>
     <string name="detail_screen">Detail Screen</string>
     <string name="stats">Статистики</string>
     <string name="stats_expenses">Общо разходи:</string>
@@ -19,4 +20,25 @@
     <string name="stats_desires">Желания:</string>
     <string name="stats_desires_text">Желания</string>
     <string name="filters_current_month">Текущ месец</string>
+    <string name="category">Категория</string>
+    <string name="recurring_interval_description">Автоматично добавяне</string>
+    <string name="recurring_interval_none">Изключено</string>
+    <string name="recurring_interval_daily">Всеки ден</string>
+    <string name="recurring_interval_weekly">Всяка седмица</string>
+    <string name="recurring_interval_monthly">Всеки месец</string>
+
+    <string name="category_other">Друго</string>
+    <string name="category_clothing">Облекло</string>
+    <string name="category_bills">Сметки</string>
+    <string name="category_food">Храна</string>
+    <string name="category_rent">Наем</string>
+    <string name="category_fun">Забавление</string>
+    <string name="category_edu">Образование</string>
+    <string name="category_invest">Инвестиции</string>
+    <string name="category_health">Здраве</string>
+    <string name="category_repairs">Поддържка и ремонт</string>
+
+    <string name="currency_bgn">лв.</string>
+    <string name="currency_eur">EUR</string>
+    <string name="currency_usd">USD</string>
 </resources>

@@ -5,7 +5,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
-import com.expensehound.app.ui.notifications.AppNotificationManager
+import com.expensehound.app.ui.services.notifications.AppNotificationManager
+import com.expensehound.app.ui.services.workers.RecurringIntervalWorker
 import com.expensehound.app.ui.viewmodel.MainViewModel
 import com.expensehound.app.ui.viewmodel.StatsViewModel
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
@@ -23,8 +24,8 @@ class MainActivity : ComponentActivity() {
             App(demoViewModel, statsViewModel)
         }
 
+        RecurringIntervalWorker.schedule(this)
         AppNotificationManager.createNotificationChannel(this)
     }
-
 }
 

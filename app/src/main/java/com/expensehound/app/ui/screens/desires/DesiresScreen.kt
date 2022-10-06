@@ -37,7 +37,7 @@ import com.expensehound.app.ui.viewmodel.MainViewModel
 import com.expensehound.app.ui.components.DateTimePicker
 import com.expensehound.app.ui.components.NewPurchaseScreenAnimated
 import com.expensehound.app.ui.components.PurchaseItemCard
-import com.expensehound.app.ui.notifications.AppNotificationManager
+import com.expensehound.app.ui.services.notifications.AppNotificationManager
 import com.expensehound.app.ui.theme.margin_double
 import com.expensehound.app.ui.theme.margin_half
 import com.expensehound.app.utils.getStartOfMonthAsTimestamp

@@ -43,6 +43,7 @@ fun PurchaseItemCardMainActionButtons(
                         purchaseItemInput.selectedCategory.value = purchaseItem.category
                         purchaseItemInput.comment.value = purchaseItem.comment
                         purchaseItemInput.price.value = purchaseItem.price.toString()
+                        purchaseItemInput.recurringInterval.value = purchaseItem.recurringInterval
                     },
                 painter = painterResource(id = R.drawable.ic_baseline_edit_24),
                 contentDescription = ".",

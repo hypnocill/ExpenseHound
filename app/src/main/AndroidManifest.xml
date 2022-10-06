@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ComposeTemplate">
         <receiver
-            android:name=".ui.notifications.AlarmReceiver"
+            android:name=".ui.services.notifications.AlarmReceiver"
             android:enabled="true"/>
         <activity
             android:name="com.expensehound.app.ui.MainActivity"
