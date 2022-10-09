@@ -111,7 +111,7 @@ class PurchaseRepository(context: Context) {
             purchaseItem.category,
             purchaseItem.price,
             purchaseItem.comment,
-            recurringInterval
+            recurringInterval,
         )
     }
 
@@ -123,7 +123,7 @@ class PurchaseRepository(context: Context) {
         category: Category,
         price: Double,
         comment: String?,
-        recurringInterval: RecurringInterval
+        recurringInterval: RecurringInterval,
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             db.purchaseItemDao().updateMainProperties(
@@ -133,7 +133,7 @@ class PurchaseRepository(context: Context) {
                 category,
                 price,
                 comment,
-                recurringInterval
+                recurringInterval,
             )
         }
     }

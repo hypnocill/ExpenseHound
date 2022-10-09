@@ -51,7 +51,7 @@ interface PurchaseItemDao {
         category: Category,
         price: Double,
         comment: String?,
-        recurringInterval: RecurringInterval
+        recurringInterval: RecurringInterval,
     )
 
     @Query("UPDATE purchase_items SET notification_id=:notificationId, notification_timestamp=:notificationTimestamp where uid=:uid")

@@ -5,7 +5,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-// ADD COLUMN TO INDICATE THAT IT WAS AUTOMATICALLY CREATED. Possible CREATED BY
 @Entity(
     tableName = "purchase_items",
 )
@@ -21,6 +20,7 @@ data class PurchaseItem(
     @ColumnInfo(name = "notification_id") val notificationId: Int? = null,
     @ColumnInfo(name = "notification_timestamp") val notificationTimestamp: Long? = null,
     @ColumnInfo(name = "created_at") val createdAt: Long,
+    @ColumnInfo(name = "created_automatically") val createdAutomatically: Boolean = false,
     @ColumnInfo(name = "recurring_interval") var recurringInterval: RecurringInterval = com.expensehound.app.data.entity.RecurringInterval.NONE,
 )
 

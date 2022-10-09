@@ -99,7 +99,6 @@ fun NewPurchaseScreen(input: BasePurchaseItemInput, purchaseIntent: MutableState
                     .focusRequester(focusRequester)
             )
 
-
             Row(
                 modifier = Modifier
                     .padding(margin_standard)
@@ -130,6 +129,7 @@ fun NewPurchaseScreen(input: BasePurchaseItemInput, purchaseIntent: MutableState
                 }
             }
             Row(modifier = Modifier.fillMaxWidth()) {
+
                 // Category dropdown
                 NewPurchaseDropdown(
                     getCategoryString(context, input.selectedCategory.value),

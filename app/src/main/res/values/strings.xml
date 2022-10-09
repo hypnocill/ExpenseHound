@@ -8,6 +8,8 @@
     <string name="launch">Launch</string>
     <string name="new_purchase">Нов разход</string>
     <string name="new_future_purchase">Ново желание</string>
+    <string name="info">Информация</string>
+    <string name="agreed">Добре</string>
     <string name="name">Име</string>
     <string name="price">Цена</string>
     <string name="comment">Коментар</string>
@@ -26,6 +28,8 @@
     <string name="recurring_interval_daily">Всеки ден</string>
     <string name="recurring_interval_weekly">Всяка седмица</string>
     <string name="recurring_interval_monthly">Всеки месец</string>
+    <string name="recurring_interval_created_by">(Автоматично създадено)</string>
+    <string name="recurring_interval_info">Текущият разход ще бъде автоматично добавяне в началото на избрания от вас времеви период, съответно всеки ден, в началото на всяка седмица (понеделник) или на първо число всеки месец. Може да ползвате автоматичното добавяне на разходи например за вашите месечни сметки.</string>
 
     <string name="category_other">Друго</string>
     <string name="category_clothing">Облекло</string>

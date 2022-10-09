@@ -15,14 +15,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DragHandle
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,11 +37,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import coil.compose.rememberAsyncImagePainter
 import com.expensehound.app.R
 import com.expensehound.app.data.entity.Category
 import com.expensehound.app.data.entity.Currency
 import com.expensehound.app.data.entity.PurchaseItem
+import com.expensehound.app.data.entity.RecurringInterval
 import com.expensehound.app.data.entity.getCategoryString
 import com.expensehound.app.data.entity.getCurrencyString
 import com.expensehound.app.data.entity.getRecurringIntervalString
@@ -56,6 +62,7 @@ fun PurchaseDetailsScreen(
 ) {
     val context = LocalContext.current
     var purchaseItems = remember { mutableStateListOf<PurchaseItem>() }
+    val recurringIntervalDialogVisible = remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
         viewModel.getPurchaseItemById(uid, purchaseItems)
@@ -122,6 +129,13 @@ fun PurchaseDetailsScreen(
                     }
                 }
 
+                if (purchaseItem.createdAutomatically) {
+                    Text(
+                        text = stringResource(id = R.string.recurring_interval_created_by),
+                        style = MaterialTheme.typography.displaySmall,
+                    )
+                }
+
                 DetailsRow(
                     stringResource(id = R.string.category),
                     getCategoryString(context, purchaseItem.category)
@@ -142,7 +156,7 @@ fun PurchaseDetailsScreen(
                         )
                     ) {
                         IconButton(onClick = {
-                            Log.d("asd", "CLICKED")
+                            recurringIntervalDialogVisible.value = true
                         }) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_baseline_info_24),
@@ -150,6 +164,7 @@ fun PurchaseDetailsScreen(
                                 tint = MaterialTheme.colorScheme.outline
                             )
                         }
+                        RecurringIntervalInfoDialog(isVisible = recurringIntervalDialogVisible)
                     }
                 }
 
@@ -183,30 +198,50 @@ fun PurchaseDetailsScreen(
 }
 
 @Composable
+fun RecurringIntervalInfoDialog(isVisible: MutableState<Boolean>) {
+    if (isVisible.value) {
+        AlertDialog(
+            onDismissRequest = { isVisible.value = false },
+            title = {
+                Text(text = stringResource(id = R.string.info))
+            },
+            text = {
+               Text(text = stringResource(id = R.string.recurring_interval_info))
+            },
+            confirmButton = {
+                TextButton(onClick = {isVisible.value = false})
+                { Text(text = stringResource(id = R.string.agreed)) }
+            },
+        )
+    }
+}
+
+@Composable
 fun DetailsRow(
     title: String,
     description: String,
     actionButton: @Composable (() -> Unit?)? = null
 ) {
-    Row(
+
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = margin_standard),
     ) {
-        Column {
-            Text(
-                text = "$title:",
-                style = MaterialTheme.typography.titleSmall,
-            )
+        Text(
+            text = "$title:",
+            style = MaterialTheme.typography.titleSmall,
+        )
 
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = description,
                 style = MaterialTheme.typography.titleMedium,
             )
-        }
 
-        if (actionButton != null) {
-            actionButton()
+            if (actionButton != null) {
+                actionButton()
+            }
         }
     }
 }

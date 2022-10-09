@@ -2,6 +2,7 @@ package com.expensehound.app.ui.components
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,8 +27,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.expensehound.app.R
 import com.expensehound.app.data.entity.PurchaseItem
 import com.expensehound.app.data.entity.getCurrencyString
 import com.expensehound.app.ui.screens.purchases.df
@@ -51,7 +56,7 @@ fun PurchaseItemCard(
             .fillMaxWidth()
             .height(150.dp)
             .padding(margin_half)
-            .clickable { onClick() },
+            .clickable { onClick() }
     ) {
         Row(
             modifier = Modifier
@@ -79,6 +84,13 @@ fun PurchaseItemCard(
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
+
+                    if (purchaseItem.createdAutomatically) {
+                        Text(
+                            text = stringResource(id = R.string.recurring_interval_created_by),
+                            style = MaterialTheme.typography.titleSmall,
+                        )
+                    }
                 }
 
                 Row {
@@ -101,7 +113,9 @@ fun PurchaseItemCard(
                     purchaseItem.image.asImageBitmap(),
                     null,
                     contentScale = ContentScale.FillHeight,
-                    modifier = Modifier.fillMaxHeight().clip(RoundedCornerShape(15.dp, 0.dp, 0.dp, 15.dp))
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .clip(RoundedCornerShape(15.dp, 0.dp, 0.dp, 15.dp))
                 )
             }
         }
