@@ -14,7 +14,7 @@ class StatsViewModel(context: Context) : ViewModel() {
     val purchaseRepository = PurchaseRepository(context)
     val desiresRepository = FulfilledDesireRepository(context)
 
-    val statsFiltersMonth = mutableStateOf(true)
+    val statsFiltersMonth = mutableStateOf(false)
 
     fun setStatsFilterMonth(value: Boolean) {
         statsFiltersMonth.value = value

@@ -24,8 +24,8 @@ class MainViewModel(context: Context) : ViewModel() {
     val newFuturePurchaseInput: BasePurchaseItemInput
     var newFuturePurchaseIntent = mutableStateOf(false)
 
-    val purchasesFiltersMonth = mutableStateOf(true)
-    val desiresFiltersMonth = mutableStateOf(true)
+    val purchasesFiltersMonth = mutableStateOf(false)
+    val desiresFiltersMonth = mutableStateOf(false)
 
     init {
         newPurchaseInput = initBasePurchaseItemInput()

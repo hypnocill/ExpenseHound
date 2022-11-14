@@ -54,8 +54,10 @@ fun App(demoViewModel: MainViewModel, statsViewModel: StatsViewModel) {
             }, topBar = {
 
                 if (demoViewModel.newPurchaseIntent.value) {
+                    val titleStringId = if (demoViewModel.newPurchaseInput.id.value == null) R.string.new_purchase else R.string.new_purchase_edit
+
                     AddNewPurchaseTopAppBar(
-                        title = stringResource(id = R.string.new_purchase),
+                        title = stringResource(id = titleStringId),
                         onDismiss = {
                             demoViewModel.newPurchaseIntent.value = false
                             resetNewPurchaseInput(demoViewModel.newPurchaseInput)
@@ -71,8 +73,10 @@ fun App(demoViewModel: MainViewModel, statsViewModel: StatsViewModel) {
                         }
                     )
                 } else if (demoViewModel.newFuturePurchaseIntent.value) {
+                    val titleStringId = if (demoViewModel.newPurchaseInput.id.value == null) R.string.new_future_purchase else R.string.new_purchase_edit
+
                     AddNewPurchaseTopAppBar(
-                        title = stringResource(id = R.string.new_future_purchase),
+                        title = stringResource(id = titleStringId),
                         onDismiss = {
                             demoViewModel.newFuturePurchaseIntent.value = false
                             resetNewPurchaseInput(demoViewModel.newFuturePurchaseInput)

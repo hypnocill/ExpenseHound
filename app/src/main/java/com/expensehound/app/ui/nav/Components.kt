@@ -79,13 +79,6 @@ fun DemoTopAppBar(navController: NavHostController) {
                 Text(stringResource(id = R.string.stats))
             }
         },
-
-        // Material design suggests avoiding large areas of bright colors in dark theme. A common
-        // pattern is to color a container primary color in light theme and surface color in dark
-        // themes; many components use this strategy by default e.g. App Bars and Bottom Navigation.
-        // To make this easier to implement, Colors offers a primarySurface color which provides
-        // exactly this behaviour and these components use by default.
-//        backgroundColor = MaterialTheme.colorScheme.primaryContainer
     )
 }
 
@@ -101,7 +94,7 @@ fun AddNewPurchaseTopAppBar(title: String, onDismiss: () -> Unit, onSave: () -> 
         }
     }, actions = {
         TextButton(onClick = { onSave() }) {
-            Text("Запази")
+            Text(stringResource(id = R.string.save_edit))
         }
     })
 }

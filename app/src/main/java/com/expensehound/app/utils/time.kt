@@ -11,7 +11,7 @@ fun getStartOfMonthAsTimestamp(): Long {
 }
 
 fun convertTimestampToDatetimeString(timestamp: Long): String {
-    val simpleDate = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
+    val simpleDate = SimpleDateFormat("dd/M/yyyy HH:mm:ss")
 
     return simpleDate.format(timestamp) ?: ""
 }

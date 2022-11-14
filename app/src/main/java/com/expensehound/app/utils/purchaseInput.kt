@@ -15,44 +15,66 @@ fun onPurchaseInputSave(
     viewModel: MainViewModel,
     isPurchased: Boolean
 ) {
-    purchaseIntent.value = false
-
-    if (input.text.value != PurchaseItemInputInitialValues.text
-        && input.price.value != PurchaseItemInputInitialValues.price
+    if (input.text.value == PurchaseItemInputInitialValues.text
+        || input.price.value == PurchaseItemInputInitialValues.price
     ) {
-        val newPurchaseItem =
-            PurchaseItem(
-                name = input.text.value,
-                image = input.image.value,
-                category = input.selectedCategory.value,
-                price = input.price.value.toDouble(),
-                isPurchased = isPurchased,
-                comment = input.comment.value,
-                createdAt = System.currentTimeMillis(),
-                recurringInterval = input.recurringInterval.value
+        val validationFailureString = context.getString(
+            context.resources.getIdentifier(
+                "added_failure_missing_fields",
+                "string",
+                context.packageName
             )
-
-        if (input.id.value != null) {
-            viewModel.updatePurchaseItemMainProperties(
-                input.id.value!!,
-                newPurchaseItem.name,
-                newPurchaseItem.image,
-                newPurchaseItem.category,
-                newPurchaseItem.price,
-                newPurchaseItem.comment,
-                newPurchaseItem.recurringInterval
-            )
-        } else {
-            viewModel.insertPurchaseItem(newPurchaseItem)
-        }
+        )
 
         Toast.makeText(
             context,
-            "Успешно добавихте " + input.text.value,
+            validationFailureString + input.text.value,
             Toast.LENGTH_LONG
         ).show()
+
+        return
+    }
+    val newPurchaseItem =
+        PurchaseItem(
+            name = input.text.value,
+            image = input.image.value,
+            category = input.selectedCategory.value,
+            price = input.price.value.toDouble(),
+            isPurchased = isPurchased,
+            comment = input.comment.value,
+            createdAt = System.currentTimeMillis(),
+            recurringInterval = input.recurringInterval.value
+        )
+
+    if (input.id.value != null) {
+        viewModel.updatePurchaseItemMainProperties(
+            input.id.value!!,
+            newPurchaseItem.name,
+            newPurchaseItem.image,
+            newPurchaseItem.category,
+            newPurchaseItem.price,
+            newPurchaseItem.comment,
+            newPurchaseItem.recurringInterval
+        )
+    } else {
+        viewModel.insertPurchaseItem(newPurchaseItem)
     }
 
+    val successString = context.getString(
+        context.resources.getIdentifier(
+            "added_success",
+            "string",
+            context.packageName
+        )
+    )
+
+    Toast.makeText(
+        context,
+        successString + " " + input.text.value,
+        Toast.LENGTH_LONG
+    ).show()
+
+    purchaseIntent.value = false
     resetNewPurchaseInput(input)
 }
 
