@@ -17,6 +17,7 @@ const val INTERVAL_HOURS: Long = 24
 
 // This worker is NOT idempotent.
 // SHOULD ONLY BE EXECUTED ONCE PER 24h.
+// REFACTOR to
 class RecurringIntervalWorker(val context: Context, workerParams: WorkerParameters) :
     Worker(context, workerParams) {
 
@@ -24,6 +25,9 @@ class RecurringIntervalWorker(val context: Context, workerParams: WorkerParamete
         val repository = PurchaseRepository(context)
         val list = repository.getAllWithRecurringIntervalSync()
 
+        // instead of assuming this worker will always be executed once a day,
+        // get the date of the last item with recurring interval, calculate the days different from current time,
+        // and loop each day to add all for that day
         list.forEach {
             val isDaily = it.recurringInterval == RecurringInterval.DAILY
             val isWeekly = it.recurringInterval == RecurringInterval.WEEKLY && isMonday()
