@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.ComposeTemplate" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.ExpenseHound" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">#ffc6e7ff</item>
         <item name="colorPrimaryVariant">#ff006590</item>
@@ -14,7 +14,7 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="Theme.ComposeTemplate.NoActionBar">
+    <style name="Theme.ExpenseHound.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>

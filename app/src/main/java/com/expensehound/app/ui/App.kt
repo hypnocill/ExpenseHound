@@ -18,7 +18,7 @@ import com.expensehound.app.ui.nav.AppScreens
 import com.expensehound.app.ui.nav.BottomNavigation
 import com.expensehound.app.ui.nav.DemoNavHost
 import com.expensehound.app.ui.nav.DemoTopAppBar
-import com.expensehound.app.ui.theme.ComposeTemplateTheme
+import com.expensehound.app.ui.theme.ExpenseHoundTheme
 import com.expensehound.app.ui.viewmodel.MainViewModel
 import com.expensehound.app.ui.viewmodel.StatsViewModel
 import com.expensehound.app.utils.onPurchaseInputSave
@@ -33,7 +33,7 @@ import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 @ExperimentalMaterialNavigationApi
 @Composable
 fun App(demoViewModel: MainViewModel, statsViewModel: StatsViewModel) {
-    ComposeTemplateTheme {
+    ExpenseHoundTheme {
 
         val navScreens = listOf(
             AppScreens.HomeNav,

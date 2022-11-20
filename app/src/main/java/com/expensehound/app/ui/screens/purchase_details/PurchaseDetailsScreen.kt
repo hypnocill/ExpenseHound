@@ -48,7 +48,7 @@ import com.expensehound.app.data.entity.getCategoryString
 import com.expensehound.app.data.entity.getCurrencyString
 import com.expensehound.app.data.entity.getRecurringIntervalString
 import com.expensehound.app.ui.screens.purchases.df
-import com.expensehound.app.ui.theme.ComposeTemplateTheme
+import com.expensehound.app.ui.theme.ExpenseHoundTheme
 import com.expensehound.app.ui.theme.card_corner_radius_lg
 import com.expensehound.app.ui.theme.margin_double
 import com.expensehound.app.ui.theme.margin_standard
@@ -71,7 +71,7 @@ fun PurchaseDetailsScreen(
     val clipboardManager: androidx.compose.ui.platform.ClipboardManager =
         LocalClipboardManager.current
 
-    ComposeTemplateTheme {
+    ExpenseHoundTheme {
         Surface(
             color = MaterialTheme.colorScheme.background,
             shape = RoundedCornerShape(card_corner_radius_lg)

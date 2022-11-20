@@ -68,7 +68,7 @@ private val DarkThemeColors = darkColorScheme(
 )
 
 @Composable
-fun ComposeTemplateTheme(
+fun ExpenseHoundTheme(
     useDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable() () -> Unit
 ) {

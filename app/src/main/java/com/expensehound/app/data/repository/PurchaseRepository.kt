@@ -100,21 +100,6 @@ class PurchaseRepository(context: Context) {
         }
     }
 
-    fun updatePurchaseItemRecurringInterval(
-        purchaseItem: PurchaseItem,
-        recurringInterval: RecurringInterval
-    ) {
-        updatePurchaseItemMainProperties(
-            purchaseItem.uid,
-            purchaseItem.name,
-            purchaseItem.image,
-            purchaseItem.category,
-            purchaseItem.price,
-            purchaseItem.comment,
-            recurringInterval,
-        )
-    }
-
     // Refactor this function so that all params are optional and there's no need to pass params that will not be updated
     fun updatePurchaseItemMainProperties(
         uid: Int,
@@ -142,5 +127,25 @@ class PurchaseRepository(context: Context) {
 
     fun getAllWithRecurringIntervalSync(from: Long? = null, to: Long? = null): List<PurchaseItem> {
         return db.purchaseItemDao().getAllWithRecurringIntervals(from, to)
+    }
+
+    fun insertPurchaseItemSync(purchaseItem: PurchaseItem) {
+        db.purchaseItemDao().insert(purchaseItem)
+    }
+
+    //TODO: Remove this function and use "updateMainProperties" only, when refactored
+    fun updatePurchaseItemRecurringIntervalSync(
+        purchaseItem: PurchaseItem,
+        recurringInterval: RecurringInterval
+    ) {
+            db.purchaseItemDao().updateMainProperties(
+                purchaseItem.uid,
+                purchaseItem.name,
+                purchaseItem.image,
+                purchaseItem.category,
+                purchaseItem.price,
+                purchaseItem.comment,
+                recurringInterval,
+            )
     }
 }

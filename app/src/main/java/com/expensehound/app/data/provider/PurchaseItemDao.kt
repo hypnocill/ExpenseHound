@@ -59,6 +59,6 @@ interface PurchaseItemDao {
 
     // SYNC
 
-    @Query("SELECT * FROM purchase_items WHERE recurring_interval IS NOT 'NONE' AND (:from IS NULL OR created_at >= :from) AND (:to IS NULL OR created_at <= :to)")
+    @Query("SELECT * FROM purchase_items WHERE recurring_interval IS NOT 'NONE' AND (:from IS NULL OR created_at >= :from) AND (:to IS NULL OR created_at <= :to) ORDER BY created_at ASC")
     fun getAllWithRecurringIntervals(from: Long? = null, to: Long? = null): List<PurchaseItem>
 }

@@ -37,7 +37,7 @@ import com.expensehound.app.data.entity.getCurrencyString
 import com.expensehound.app.ui.components.AppFilterChip
 import com.expensehound.app.ui.components.StatsLegendRow
 import com.expensehound.app.ui.screens.desires.df
-import com.expensehound.app.ui.theme.ComposeTemplateTheme
+import com.expensehound.app.ui.theme.ExpenseHoundTheme
 import com.expensehound.app.ui.theme.card_corner_radius_lg
 import com.expensehound.app.ui.theme.margin_half
 import com.expensehound.app.ui.theme.margin_standard
@@ -76,7 +76,7 @@ fun StatsScreen(viewModel: MainViewModel, statsViewModel: StatsViewModel) {
         totalSumPrice += it.sumPrice
     }
 
-    ComposeTemplateTheme {
+    ExpenseHoundTheme {
         Surface(
             color = MaterialTheme.colorScheme.background,
             shape = RoundedCornerShape(card_corner_radius_lg)
