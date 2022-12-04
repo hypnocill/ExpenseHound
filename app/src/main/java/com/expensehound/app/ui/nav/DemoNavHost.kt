@@ -3,19 +3,14 @@ package com.expensehound.app.ui.nav
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.expensehound.app.data.entity.FulfilledDesire
-import com.expensehound.app.data.entity.PurchaseItem
-import com.expensehound.app.data.entity.StatsPurchaseItemsByCategory
 import com.expensehound.app.ui.screens.desires.DesiresScreen
+import com.expensehound.app.ui.screens.income.IncomeScreen
 import com.expensehound.app.ui.screens.purchase_details.PurchaseDetailsScreen
 import com.expensehound.app.ui.screens.purchases.PurchasesScreen
 import com.expensehound.app.ui.screens.stats.StatsScreen
@@ -39,26 +34,25 @@ fun DemoNavHost(
         modifier = modifier
     ) {
         composable(route = AppScreens.HomeNav.route) {
-            PurchasesScreen(
-                onItemClicked = { item, index ->
-                    navController.navigate("${AppScreens.Detail.route}/${item.uid}")
-                },
-                viewModel
-            )
+            PurchasesScreen(viewModel) { item, index ->
+                navController.navigate("${AppScreens.Detail.route}/${item.uid}")
+            }
         }
         composable(route = AppScreens.Future.route) {
             viewModel.newPurchaseIntent.value = false
-            DesiresScreen(
-                onItemClicked = { item, index ->
-                    navController.navigate("${AppScreens.FutureDetail.route}/${item.uid}")
-                },
-                viewModel
-            )
+            DesiresScreen(viewModel) { item, index ->
+                navController.navigate("${AppScreens.FutureDetail.route}/${item.uid}")
+            }
+        }
+        composable(route = AppScreens.Income.route) {
+            viewModel.newIncomeIntent.value = false
+            IncomeScreen(viewModel) { item, index ->
+                // TODO: ADD NAVIGATION
+            }
         }
         composable(route = AppScreens.Stats.route) {
             StatsScreen(viewModel, statsViewModel)
         }
-        //  adb shell am start -a android.intent.action.VIEW -d "expensehoundapp://details/red"
         bottomSheet(
             route = "${AppScreens.Detail.route}/{uid}",
             arguments = listOf(
@@ -68,7 +62,6 @@ fun DemoNavHost(
             )
         ) { entry ->
             val index = entry.arguments?.getInt("uid", -1)
-
             PurchaseDetailsScreen(viewModel, index!!)
         }
         bottomSheet(
@@ -80,8 +73,9 @@ fun DemoNavHost(
             ),
         ) { entry ->
             val index = entry.arguments?.getInt("uid", -1)
-
             PurchaseDetailsScreen(viewModel, index!!)
         }
     }
 }
+
+

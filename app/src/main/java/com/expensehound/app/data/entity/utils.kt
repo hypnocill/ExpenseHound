@@ -24,7 +24,6 @@ enum class Category {
 
 enum class RecurringInterval() {
     NONE,
-    DAILY,
     WEEKLY,
     MONTHLY
 }
@@ -56,17 +55,20 @@ fun getCategoryString(context: Context, category: Category): String {
     }
 }
 
-
-
 fun getRecurringIntervalString(context: Context, recurringInterval: RecurringInterval): String {
     val activity = context
 
     return when (recurringInterval) {
         RecurringInterval.NONE -> activity.getString(R.string.recurring_interval_none)
-        RecurringInterval.DAILY -> activity.getString(R.string.recurring_interval_daily)
         RecurringInterval.WEEKLY -> activity.getString(R.string.recurring_interval_weekly)
         RecurringInterval.MONTHLY -> activity.getString(R.string.recurring_interval_monthly)
     }
+}
+
+interface ItemWithRecurringInterval {
+    val uid: Int
+    val createdAt: Long
+    val recurringInterval: RecurringInterval?
 }
 
 

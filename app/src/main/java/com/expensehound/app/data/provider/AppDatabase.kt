@@ -7,16 +7,18 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.expensehound.app.data.entity.FulfilledDesire
+import com.expensehound.app.data.entity.Income
 import com.expensehound.app.data.entity.PurchaseItem
 import java.util.concurrent.Executors
 
 private val IO_EXECUTOR = Executors.newSingleThreadExecutor()
 
-@Database(entities = [PurchaseItem::class, FulfilledDesire::class], version = 1)
+@Database(entities = [PurchaseItem::class, FulfilledDesire::class, Income::class], version = 1)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun purchaseItemDao(): PurchaseItemDao
     abstract fun fulfilledDesireDao(): FulfilledDesireDao
+    abstract fun incomeDao(): IncomeDao
 
     companion object {
         private var INSTANCE: AppDatabase? = null
@@ -45,10 +47,6 @@ abstract class AppDatabase : RoomDatabase() {
                     }
                 }
             }
-        }
-
-        fun destroyInstance() {
-            INSTANCE = null
         }
     }
 }

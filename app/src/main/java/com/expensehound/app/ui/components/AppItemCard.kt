@@ -1,8 +1,8 @@
 package com.expensehound.app.ui.components
 
+import android.graphics.Bitmap
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,41 +14,34 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.expensehound.app.R
-import com.expensehound.app.data.entity.PurchaseItem
-import com.expensehound.app.data.entity.getCurrencyString
-import com.expensehound.app.ui.screens.purchases.df
 import com.expensehound.app.ui.theme.margin_half
 import com.expensehound.app.ui.theme.margin_standard
-import com.expensehound.app.ui.viewmodel.BasePurchaseItemInput
 
 @RequiresApi(Build.VERSION_CODES.N)
 @Composable
-fun PurchaseItemCard(
-    purchaseItem: PurchaseItem,
-    purchaseIntent: MutableState<Boolean>,
-    basePurchaseItemInput: BasePurchaseItemInput,
+fun AppItemCard(
+    title: String,
+    subtitle: String? = null,
+    imageBitmap: Bitmap? = null,
     onClick: () -> Unit,
+    onEdit: () -> Unit,
     onDelete: () -> Unit,
+    isCreatedAutomatically: Boolean,
     additionalActions: @Composable() (() -> Unit)? = null
 ) {
-    val context = LocalContext.current
     val openDeleteDialog = remember { mutableStateOf(false) }
 
     Card(
@@ -75,17 +68,20 @@ fun PurchaseItemCard(
                     Text(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        text = purchaseItem.name,
+                        text = title,
                         style = MaterialTheme.typography.displayLarge,
                     )
-                    Text(
-                        text = df.format(purchaseItem.price) + getCurrencyString(context, purchaseItem.currency),
-                        style = MaterialTheme.typography.headlineSmall,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
-                    )
 
-                    if (purchaseItem.createdAutomatically) {
+                    if (subtitle != null) {
+                        Text(
+                            text = subtitle,
+                            style = MaterialTheme.typography.headlineSmall,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    }
+
+                    if (isCreatedAutomatically) {
                         Text(
                             text = stringResource(id = R.string.recurring_interval_created_by),
                             style = MaterialTheme.typography.titleSmall,
@@ -98,19 +94,18 @@ fun PurchaseItemCard(
                         additionalActions()
                     }
 
-                    PurchaseItemCardMainActionButtons(
+                    AppItemCardActionButtons(
                         openDeleteDialog = openDeleteDialog,
-                        purchaseIntent = purchaseIntent,
-                        purchaseItemInput = basePurchaseItemInput,
-                        purchaseItem = purchaseItem,
+                        name = title,
+                        onEdit = onEdit,
                         onDelete = onDelete
                     )
                 }
             }
 
-            if (purchaseItem.image != null) {
+            if (imageBitmap != null) {
                 Image(
-                    purchaseItem.image.asImageBitmap(),
+                    imageBitmap.asImageBitmap(),
                     null,
                     contentScale = ContentScale.FillHeight,
                     modifier = Modifier

@@ -14,6 +14,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.expensehound.app.R
 import com.expensehound.app.data.entity.PurchaseItem
+import com.expensehound.app.ui.MainActivity
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import java.util.*
 import kotlin.random.Random
 
@@ -21,7 +23,13 @@ class AppNotificationManager {
     @RequiresApi(Build.VERSION_CODES.M)
     companion object {
 
-        fun notify(context: Context, pendingIntent: PendingIntent, channelId: String, title: String, text: String) {
+        fun notify(
+            context: Context,
+            pendingIntent: PendingIntent,
+            channelId: String,
+            title: String,
+            text: String
+        ) {
             val builder = NotificationCompat.Builder(context, "channel1")
                 .setChannelId(channelId)
                 .setSmallIcon(R.drawable.ic_baseline_add_alert_24)
@@ -34,6 +42,29 @@ class AppNotificationManager {
 
             val notificationManagerCompat = NotificationManagerCompat.from(context)
             notificationManagerCompat.notify(Random.nextInt(1, 1000), builder.build())
+        }
+
+
+        @OptIn(ExperimentalMaterialNavigationApi::class)
+        fun notifySimple(context: Context, channelId: String, title: String, text: String) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val notificationIntent = Intent(context, MainActivity::class.java)
+                notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                val pendingIntent = PendingIntent.getActivity(
+                    context,
+                    0,
+                    notificationIntent,
+                    PendingIntent.FLAG_IMMUTABLE
+                )
+
+                notify(
+                    context,
+                    pendingIntent,
+                    channelId,
+                    title,
+                    text
+                )
+            }
         }
 
         fun createNotificationChannel(context: Context) {
@@ -106,6 +137,4 @@ class AppNotificationManager {
             return notificationId
         }
     }
-
-
 }

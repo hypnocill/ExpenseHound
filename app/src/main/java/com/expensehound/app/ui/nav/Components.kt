@@ -34,7 +34,6 @@ fun BottomNavigation(
                     screen.icon, contentDescription = screen.resourceId.toString()
                 )
             },
-                label = { Text(stringResource(id = screen.resourceId)) },
                 selected = isSelected,
                 alwaysShowLabel = false,
                 onClick = {
@@ -54,10 +53,11 @@ fun DemoTopAppBar(navController: NavHostController) {
     val route = navBackStackEntry?.destination?.route
     SmallTopAppBar(
         navigationIcon = {
-            if (route.equals("list") || route.equals("future") || route.equals("stats")) {
+            if (route.equals("list") || route.equals("future") || route.equals("income") || route.equals("stats")) {
                 val iconToSet = when (route) {
                     "list" -> AppScreens.HomeNav.icon
                     "future" -> AppScreens.Future.icon
+                    "income" -> AppScreens.Income.icon
                     "stats" -> AppScreens.Stats.icon
                     else -> AppScreens.Detail.icon
                 }
@@ -75,6 +75,9 @@ fun DemoTopAppBar(navController: NavHostController) {
             if (route.equals("future")) {
                 Text(stringResource(id = R.string.nav_nava))
             }
+            if (route.equals("income")) {
+                Text(stringResource(id = R.string.nav_income))
+            }
             if (route.equals("stats")) {
                 Text(stringResource(id = R.string.stats))
             }
@@ -84,7 +87,7 @@ fun DemoTopAppBar(navController: NavHostController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddNewPurchaseTopAppBar(title: String, onDismiss: () -> Unit, onSave: () -> Unit) {
+fun AddNewEntityTopAppBar(title: String, onDismiss: () -> Unit, onSave: () -> Unit) {
     SmallTopAppBar(title = { Text(title) }, navigationIcon = {
         IconButton(onClick = { onDismiss() }) {
             Icon(

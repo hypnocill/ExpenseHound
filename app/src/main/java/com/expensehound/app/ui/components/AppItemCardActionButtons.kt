@@ -13,19 +13,15 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.expensehound.app.R
-import com.expensehound.app.data.entity.PurchaseItem
-import com.expensehound.app.ui.screens.desires.DeleteAlert
 import com.expensehound.app.ui.theme.margin_double
-import com.expensehound.app.ui.viewmodel.BasePurchaseItemInput
 
 
 @RequiresApi(Build.VERSION_CODES.N)
 @Composable
-fun PurchaseItemCardMainActionButtons(
+fun AppItemCardActionButtons(
     openDeleteDialog: MutableState<Boolean>,
-    purchaseIntent: MutableState<Boolean>,
-    purchaseItemInput: BasePurchaseItemInput,
-    purchaseItem: PurchaseItem,
+    name: String,
+    onEdit: () -> Unit,
     onDelete: () -> Unit,
     disableEdit: Boolean = false
 ) {
@@ -36,14 +32,7 @@ fun PurchaseItemCardMainActionButtons(
                     .size(margin_double)
                     .fillMaxHeight()
                     .clickable {
-                        purchaseIntent.value = true
-                        purchaseItemInput.id.value = purchaseItem.uid
-                        purchaseItemInput.text.value = purchaseItem.name
-                        purchaseItemInput.image.value = purchaseItem.image
-                        purchaseItemInput.selectedCategory.value = purchaseItem.category
-                        purchaseItemInput.comment.value = purchaseItem.comment
-                        purchaseItemInput.price.value = purchaseItem.price.toString()
-                        purchaseItemInput.recurringInterval.value = purchaseItem.recurringInterval
+                        onEdit()
                     },
                 painter = painterResource(id = R.drawable.ic_baseline_edit_24),
                 contentDescription = ".",
@@ -61,6 +50,6 @@ fun PurchaseItemCardMainActionButtons(
             tint = MaterialTheme.colorScheme.onErrorContainer
         )
 
-        DeleteAlert(openDeleteDialog, purchaseItem, onDelete)
+        DeleteAlert(openDeleteDialog, name, onDelete)
     }
 }

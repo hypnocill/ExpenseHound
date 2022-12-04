@@ -1,7 +1,5 @@
-package com.expensehound.app.ui.screens.purchases
+package com.expensehound.app.ui.screens.income
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,44 +16,38 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.expensehound.app.R
-import com.expensehound.app.data.entity.PurchaseItem
+import com.expensehound.app.data.entity.Income
 import com.expensehound.app.ui.components.AppFilterChip
 import com.expensehound.app.ui.components.AppItemCard
 import com.expensehound.app.ui.components.EmptyListText
-import com.expensehound.app.ui.components.NewPurchaseScreenAnimated
+import com.expensehound.app.ui.components.NewIncomeScreenAnimated
 import com.expensehound.app.ui.theme.margin_half
 import com.expensehound.app.ui.viewmodel.MainViewModel
 import com.expensehound.app.utils.getStartOfMonthAsTimestamp
-import com.expensehound.app.utils.loadPurchaseInputInState
-import formatPrice
+import com.expensehound.app.utils.loadIncomeInputInState
 
-@RequiresApi(Build.VERSION_CODES.N)
 @Composable
-fun PurchasesScreen(
-    viewModel: MainViewModel,
-    onItemClicked: (PurchaseItem, Int) -> Unit
-) {
-    var list = remember { mutableStateListOf<PurchaseItem>() }
+fun IncomeScreen(viewModel: MainViewModel, onItemClicked: (Income, Int) -> Unit) {
+    var list = remember { mutableStateListOf<Income>() }
 
-    LaunchedEffect(key1 = viewModel.purchasesFiltersMonth.value) {
+    LaunchedEffect(key1 = viewModel.incomeFiltersMonth.value) {
         var from: Long? = null
 
-        if (viewModel.purchasesFiltersMonth.value) {
+        if (viewModel.incomeFiltersMonth.value) {
             from = getStartOfMonthAsTimestamp()
         }
 
-        viewModel.getAllPurchaseItems(list, from)
+        viewModel.getAllIncome(list, from)
     }
 
     Surface(color = MaterialTheme.colorScheme.background) {
-
         Column {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                 AppFilterChip(
                     stringResource(id = R.string.filters_current_month),
-                    viewModel.purchasesFiltersMonth.value
+                    viewModel.incomeFiltersMonth.value
                 ) {
-                    viewModel.setPurchaseFilterMonth(!viewModel.purchasesFiltersMonth.value)
+                    viewModel.setIncomeFilterMonth(!viewModel.incomeFiltersMonth.value)
                 }
             }
 
@@ -70,24 +62,24 @@ fun PurchasesScreen(
                 itemsIndexed(items = list) { index, item ->
                     AppItemCard(
                         title = item.name,
-                        subtitle = formatPrice(item.price, item.currency),
-                        imageBitmap = item.image,
-                        isCreatedAutomatically = item.createdAutomatically,
-                        onClick = { onItemClicked(item, index) },
+                        subtitle = item.comment,
+                        onClick = { /*TODO*/ },
                         onEdit = {
-                            viewModel.newPurchaseIntent.value = true
-                            loadPurchaseInputInState(viewModel.newPurchaseInput, item)
+                            viewModel.newIncomeIntent.value = true
+                            loadIncomeInputInState(viewModel.newIncomeInput, item)
                         },
-                        onDelete = { viewModel.deletePurchaseItem(item.uid) }
+                        onDelete = { viewModel.deleteIncome(item.uid) },
+                        isCreatedAutomatically = item.createdAutomatically
                     )
                 }
             }
         }
-        NewPurchaseScreenAnimated(
-            isVisible = viewModel.newPurchaseIntent.value,
-            input = viewModel.newPurchaseInput,
-            purchaseIntent = viewModel.newPurchaseIntent
+
+        NewIncomeScreenAnimated(
+            isVisible = viewModel.newIncomeIntent.value,
+            input = viewModel.newIncomeInput,
+            incomeIntent = viewModel.newIncomeIntent
         )
     }
-}
 
+}

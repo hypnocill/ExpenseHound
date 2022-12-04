@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
     tableName = "purchase_items",
 )
 data class PurchaseItem(
-    @PrimaryKey(autoGenerate = true) var uid: Int = 0,
+    @PrimaryKey(autoGenerate = true) override var uid: Int = 0,
     @ColumnInfo(name = "name") var name: String,
     @ColumnInfo(name = "image") val image: Bitmap?,
     @ColumnInfo(name = "category") val category: Category,
@@ -19,9 +19,9 @@ data class PurchaseItem(
     @ColumnInfo(name = "currency") val currency: Currency = Currency.BGN,
     @ColumnInfo(name = "notification_id") val notificationId: Int? = null,
     @ColumnInfo(name = "notification_timestamp") val notificationTimestamp: Long? = null,
-    @ColumnInfo(name = "created_at") val createdAt: Long,
+    @ColumnInfo(name = "created_at") override val createdAt: Long,
     @ColumnInfo(name = "created_automatically") val createdAutomatically: Boolean = false,
-    @ColumnInfo(name = "recurring_interval") var recurringInterval: RecurringInterval = com.expensehound.app.data.entity.RecurringInterval.NONE,
-)
+    @ColumnInfo(name = "recurring_interval") override var recurringInterval: RecurringInterval = com.expensehound.app.data.entity.RecurringInterval.NONE,
+): ItemWithRecurringInterval
 
 

@@ -13,7 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.plusAssign
 import com.expensehound.app.R
 import com.expensehound.app.ui.components.AppFab
-import com.expensehound.app.ui.nav.AddNewPurchaseTopAppBar
+import com.expensehound.app.ui.nav.AddNewEntityTopAppBar
 import com.expensehound.app.ui.nav.AppScreens
 import com.expensehound.app.ui.nav.BottomNavigation
 import com.expensehound.app.ui.nav.DemoNavHost
@@ -21,7 +21,9 @@ import com.expensehound.app.ui.nav.DemoTopAppBar
 import com.expensehound.app.ui.theme.ExpenseHoundTheme
 import com.expensehound.app.ui.viewmodel.MainViewModel
 import com.expensehound.app.ui.viewmodel.StatsViewModel
+import com.expensehound.app.utils.onIncomeInputSave
 import com.expensehound.app.utils.onPurchaseInputSave
+import com.expensehound.app.utils.resetIncomeInput
 import com.expensehound.app.utils.resetNewPurchaseInput
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
@@ -38,6 +40,7 @@ fun App(demoViewModel: MainViewModel, statsViewModel: StatsViewModel) {
         val navScreens = listOf(
             AppScreens.HomeNav,
             AppScreens.Future,
+            AppScreens.Income,
             AppScreens.Stats,
         )
 
@@ -54,9 +57,10 @@ fun App(demoViewModel: MainViewModel, statsViewModel: StatsViewModel) {
             }, topBar = {
 
                 if (demoViewModel.newPurchaseIntent.value) {
-                    val titleStringId = if (demoViewModel.newPurchaseInput.id.value == null) R.string.new_purchase else R.string.new_purchase_edit
+                    val titleStringId =
+                        if (demoViewModel.newPurchaseInput.id.value == null) R.string.new_purchase else R.string.new_purchase_edit
 
-                    AddNewPurchaseTopAppBar(
+                    AddNewEntityTopAppBar(
                         title = stringResource(id = titleStringId),
                         onDismiss = {
                             demoViewModel.newPurchaseIntent.value = false
@@ -73,9 +77,10 @@ fun App(demoViewModel: MainViewModel, statsViewModel: StatsViewModel) {
                         }
                     )
                 } else if (demoViewModel.newFuturePurchaseIntent.value) {
-                    val titleStringId = if (demoViewModel.newPurchaseInput.id.value == null) R.string.new_future_purchase else R.string.new_purchase_edit
+                    val titleStringId =
+                        if (demoViewModel.newPurchaseInput.id.value == null) R.string.new_future_purchase else R.string.new_purchase_edit
 
-                    AddNewPurchaseTopAppBar(
+                    AddNewEntityTopAppBar(
                         title = stringResource(id = titleStringId),
                         onDismiss = {
                             demoViewModel.newFuturePurchaseIntent.value = false
@@ -88,6 +93,25 @@ fun App(demoViewModel: MainViewModel, statsViewModel: StatsViewModel) {
                                 context,
                                 demoViewModel,
                                 false
+                            )
+                        }
+                    )
+                } else if (demoViewModel.newIncomeIntent.value) {
+                    val titleStringId =
+                        if (demoViewModel.newIncomeInput.id.value == null) R.string.new_income else R.string.edit_income
+
+                    AddNewEntityTopAppBar(
+                        title = stringResource(id = titleStringId),
+                        onDismiss = {
+                            demoViewModel.newIncomeIntent.value = false
+                            resetIncomeInput(demoViewModel.newIncomeInput)
+                        },
+                        onSave = {
+                            onIncomeInputSave(
+                                demoViewModel.newIncomeIntent,
+                                demoViewModel.newIncomeInput,
+                                context,
+                                demoViewModel,
                             )
                         }
                     )

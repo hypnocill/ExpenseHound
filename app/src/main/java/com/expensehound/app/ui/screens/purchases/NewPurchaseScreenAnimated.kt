@@ -2,7 +2,6 @@ package com.expensehound.app.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -11,9 +10,9 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.graphics.TransformOrigin
-import com.expensehound.app.ui.screens.new_purchase.NewPurchaseScreen
-import com.expensehound.app.ui.viewmodel.BasePurchaseItemInput
+import com.expensehound.app.ui.screens.income.NewPurchaseScreen
 import com.expensehound.app.utils.AppAnimationSpecs
+import com.expensehound.app.utils.BasePurchaseItemInput
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable

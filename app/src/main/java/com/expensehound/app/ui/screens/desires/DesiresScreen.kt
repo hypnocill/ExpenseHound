@@ -33,14 +33,17 @@ import com.expensehound.app.R
 import com.expensehound.app.data.entity.FulfilledDesire
 import com.expensehound.app.data.entity.PurchaseItem
 import com.expensehound.app.ui.components.AppFilterChip
-import com.expensehound.app.ui.viewmodel.MainViewModel
+import com.expensehound.app.ui.components.AppItemCard
 import com.expensehound.app.ui.components.DateTimePicker
+import com.expensehound.app.ui.components.EmptyListText
 import com.expensehound.app.ui.components.NewPurchaseScreenAnimated
-import com.expensehound.app.ui.components.PurchaseItemCard
 import com.expensehound.app.ui.services.notifications.AppNotificationManager
 import com.expensehound.app.ui.theme.margin_double
 import com.expensehound.app.ui.theme.margin_half
+import com.expensehound.app.ui.viewmodel.MainViewModel
 import com.expensehound.app.utils.getStartOfMonthAsTimestamp
+import com.expensehound.app.utils.loadPurchaseInputInState
+import formatPrice
 import java.text.DecimalFormat
 import java.util.*
 
@@ -49,8 +52,8 @@ val df = DecimalFormat("#.##")
 @RequiresApi(Build.VERSION_CODES.N)
 @Composable
 fun DesiresScreen(
-    onItemClicked: (PurchaseItem, Int) -> Unit,
     viewModel: MainViewModel,
+    onItemClicked: (PurchaseItem, Int) -> Unit
 ) {
     var list = remember { mutableStateListOf<PurchaseItem>() }
 
@@ -66,10 +69,17 @@ fun DesiresScreen(
 
     Surface(color = MaterialTheme.colorScheme.background) {
         Column {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End ) {
-                AppFilterChip(stringResource(id = R.string.filters_current_month), viewModel.desiresFiltersMonth.value) {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                AppFilterChip(
+                    stringResource(id = R.string.filters_current_month),
+                    viewModel.desiresFiltersMonth.value
+                ) {
                     viewModel.setDesiresFilterMonth(!viewModel.desiresFiltersMonth.value)
                 }
+            }
+
+            if (list.isEmpty()) {
+                EmptyListText()
             }
 
             LazyColumn(
@@ -77,14 +87,20 @@ fun DesiresScreen(
                 contentPadding = PaddingValues(top = margin_half)
             ) {
                 itemsIndexed(items = list) { index, item ->
-                    PurchaseItemCard(
-                        item,
-                        viewModel.newFuturePurchaseIntent,
-                        viewModel.newFuturePurchaseInput,
-                        { onItemClicked(item, index) },
-                        { viewModel.deletePurchaseItem(item.uid) },
-                        { FutureItemsAdditionalActionButtons(item, viewModel) }
-                    )
+                    AppItemCard(
+                        title = item.name,
+                        subtitle = formatPrice(item.price, item.currency),
+                        imageBitmap = item.image,
+                        isCreatedAutomatically = item.createdAutomatically,
+                        onClick = { onItemClicked(item, index) },
+                        onEdit = {
+                            viewModel.newFuturePurchaseIntent.value = true
+                            loadPurchaseInputInState(viewModel.newFuturePurchaseInput, item)
+                        },
+                        onDelete = { viewModel.deletePurchaseItem(item.uid) }
+                    ) {
+                        FutureItemsAdditionalActionButtons(item, viewModel)
+                    }
                 }
             }
         }
@@ -156,7 +172,11 @@ fun FutureItemsAdditionalActionButtons(purchaseItem: PurchaseItem, viewModel: Ma
                                 purchaseItem
                             )
 
-                        viewModel.updatePurchaseItemNotification(purchaseItem.uid, notificationId, it.timeInMillis)
+                        viewModel.updatePurchaseItemNotification(
+                            purchaseItem.uid,
+                            notificationId,
+                            it.timeInMillis
+                        )
 
                         Toast
                             .makeText(
@@ -235,52 +255,3 @@ fun ConvertFutureExpenseToExpenseAlert(
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.N)
-@Composable
-fun DeleteAlert(
-    openDialog: MutableState<Boolean>,
-    purchaseItem: PurchaseItem,
-    onDelete: () -> Unit
-) {
-
-    val context = LocalContext.current
-
-    if (!openDialog.value) {
-        return Unit
-    }
-
-    AlertDialog(
-        onDismissRequest = {
-            openDialog.value = false
-        },
-        title = {
-            Text(text = "Потвърди")
-        },
-        text = {
-            Text(text = "Сигурни ли сте, че искате да изтриете ${purchaseItem.name}?")
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    openDialog.value = false
-                    onDelete()
-
-                    Toast.makeText(
-                        context,
-                        "Успешно изтрихте ${purchaseItem.name}",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }) {
-                Text("Да")
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    openDialog.value = false
-                }) {
-                Text("Откажи")
-            }
-        }
-    )
-}

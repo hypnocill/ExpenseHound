@@ -17,9 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,6 +33,7 @@ import com.expensehound.app.data.entity.StatsPurchaseItemsByCategory
 import com.expensehound.app.data.entity.getCategoryString
 import com.expensehound.app.data.entity.getCurrencyString
 import com.expensehound.app.ui.components.AppFilterChip
+import com.expensehound.app.ui.components.EmptyListText
 import com.expensehound.app.ui.components.StatsLegendRow
 import com.expensehound.app.ui.screens.desires.df
 import com.expensehound.app.ui.theme.ExpenseHoundTheme
@@ -90,8 +89,11 @@ fun StatsScreen(viewModel: MainViewModel, statsViewModel: StatsViewModel) {
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
 
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End ) {
-                    AppFilterChip(stringResource(id = R.string.filters_current_month), statsViewModel.statsFiltersMonth.value) {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                    AppFilterChip(
+                        stringResource(id = R.string.filters_current_month),
+                        statsViewModel.statsFiltersMonth.value
+                    ) {
                         statsViewModel.setStatsFilterMonth(!statsViewModel.statsFiltersMonth.value)
                     }
                 }
@@ -101,7 +103,10 @@ fun StatsScreen(viewModel: MainViewModel, statsViewModel: StatsViewModel) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(text = stringResource(id = R.string.stats_expenses))
-                    Text(text = df.format(totalSumPrice) + getCurrencyString(context, Currency.BGN), fontSize = 35.sp)
+                    Text(
+                        text = df.format(totalSumPrice) + getCurrencyString(context, Currency.BGN),
+                        fontSize = 35.sp
+                    )
                 }
 
                 Divider(
@@ -115,7 +120,8 @@ fun StatsScreen(viewModel: MainViewModel, statsViewModel: StatsViewModel) {
                 Text(
                     text = stringResource(id = R.string.stats_expenses_by_categoy),
                     modifier = Modifier
-                        .padding(vertical = margin_standard))
+                        .padding(vertical = margin_standard)
+                )
 
                 Row() {
                     if (purchases.isNotEmpty()) {
@@ -135,6 +141,8 @@ fun StatsScreen(viewModel: MainViewModel, statsViewModel: StatsViewModel) {
                             animation = simpleChartAnimation(),
                             sliceDrawer = SimpleSliceDrawer(45F)
                         )
+                    } else {
+                        EmptyListText()
                     }
                 }
 
@@ -145,7 +153,11 @@ fun StatsScreen(viewModel: MainViewModel, statsViewModel: StatsViewModel) {
                 ) {
                     purchases.mapIndexed { index, it ->
                         val text =
-                            "${getCategoryString(context, it.category)} (${it.count}) - ${df.format(it.sumPrice)}лв."
+                            "${getCategoryString(context, it.category)} (${it.count}) - ${
+                                df.format(
+                                    it.sumPrice
+                                )
+                            }лв."
 
                         StatsLegendRow(text, StatsColor(index))
                     }
@@ -167,45 +179,54 @@ fun StatsScreen(viewModel: MainViewModel, statsViewModel: StatsViewModel) {
                     Text(
                         text = stringResource(id = R.string.stats_desires),
                         modifier = Modifier
-                            .padding(vertical = margin_standard))
-
-                    PieChart(
-                        pieChartData = PieChartData(
-                            listOf(
-                                PieChartData.Slice(
-                                    value = desires.size.toFloat(),
-                                    color = StatsColor(STATS_COLOR_PRIMARY_INDEX)
-                                ),
-                                PieChartData.Slice(
-                                    value = fulfilledDesiresCount.toFloat(),
-                                    color = StatsColor(STATS_COLOR_SECONDARY_INDEX)
-                                ),
-                            )
-                        ),
-                        modifier = Modifier
-                            .width(200.dp)
-                            .height(200.dp),
-                        animation = simpleChartAnimation(),
-                        sliceDrawer = SimpleSliceDrawer(45F)
+                            .padding(vertical = margin_standard)
                     )
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = margin_half, horizontal = margin_standard),
-                    ) {
-                        val desiresData = listOf(
-                            object: FulfilledDesiresStatsLegendsRow {
-                                override val text = "${stringResource(id = R.string.stats_desires_text)}  (${desires.size})"
-                                override val color = StatsColor(STATS_COLOR_PRIMARY_INDEX)
-                            },
-                            object: FulfilledDesiresStatsLegendsRow {
-                                override val text = "${stringResource(id = R.string.stats_fulfilled_desires)} (${fulfilledDesiresCount})"
-                                override val color = StatsColor(STATS_COLOR_SECONDARY_INDEX)
-                            }
-                        )
 
-                        desiresData.mapIndexed { _, it -> StatsLegendRow(it.text, it.color) }
+                    if (desires.isEmpty() && fulfilledDesires.isEmpty()) {
+                        EmptyListText()
+                    } else {
+                        PieChart(
+                            pieChartData = PieChartData(
+                                listOf(
+                                    PieChartData.Slice(
+                                        value = desires.size.toFloat(),
+                                        color = StatsColor(STATS_COLOR_PRIMARY_INDEX)
+                                    ),
+                                    PieChartData.Slice(
+                                        value = fulfilledDesiresCount.toFloat(),
+                                        color = StatsColor(STATS_COLOR_SECONDARY_INDEX)
+                                    ),
+                                )
+                            ),
+                            modifier = Modifier
+                                .width(200.dp)
+                                .height(200.dp),
+                            animation = simpleChartAnimation(),
+                            sliceDrawer = SimpleSliceDrawer(45F)
+                        )
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = margin_half, horizontal = margin_standard),
+                        ) {
+                            val desiresData = listOf(
+                                object : FulfilledDesiresStatsLegendsRow {
+                                    override val text =
+                                        "${stringResource(id = R.string.stats_desires_text)}  (${desires.size})"
+                                    override val color = StatsColor(STATS_COLOR_PRIMARY_INDEX)
+                                },
+                                object : FulfilledDesiresStatsLegendsRow {
+                                    override val text =
+                                        "${stringResource(id = R.string.stats_fulfilled_desires)} (${fulfilledDesiresCount})"
+                                    override val color = StatsColor(STATS_COLOR_SECONDARY_INDEX)
+                                }
+                            )
+
+                            desiresData.mapIndexed { _, it -> StatsLegendRow(it.text, it.color) }
+                        }
                     }
+
+
                 }
             }
         }

@@ -15,13 +15,3 @@ fun convertTimestampToDatetimeString(timestamp: Long): String {
 
     return simpleDate.format(timestamp) ?: ""
 }
-
-fun isMonday(calendar: Calendar): Boolean {
-    val day = calendar.get(Calendar.DAY_OF_WEEK);
-
-    return day == Calendar.MONDAY
-}
-
-fun isFirstDayOfMonth(calendar: Calendar): Boolean {
-    return calendar.get(Calendar.DAY_OF_MONTH) == 1
-}

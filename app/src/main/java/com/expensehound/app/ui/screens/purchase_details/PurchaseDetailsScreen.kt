@@ -43,17 +43,17 @@ import com.expensehound.app.R
 import com.expensehound.app.data.entity.Category
 import com.expensehound.app.data.entity.Currency
 import com.expensehound.app.data.entity.PurchaseItem
-import com.expensehound.app.data.entity.RecurringInterval
 import com.expensehound.app.data.entity.getCategoryString
 import com.expensehound.app.data.entity.getCurrencyString
 import com.expensehound.app.data.entity.getRecurringIntervalString
-import com.expensehound.app.ui.screens.purchases.df
+import com.expensehound.app.ui.components.RecurringIntervalInfoDialog
 import com.expensehound.app.ui.theme.ExpenseHoundTheme
 import com.expensehound.app.ui.theme.card_corner_radius_lg
 import com.expensehound.app.ui.theme.margin_double
 import com.expensehound.app.ui.theme.margin_standard
 import com.expensehound.app.ui.viewmodel.MainViewModel
 import com.expensehound.app.utils.convertTimestampToDatetimeString
+import formatPrice
 
 @Composable
 fun PurchaseDetailsScreen(
@@ -141,10 +141,7 @@ fun PurchaseDetailsScreen(
                     getCategoryString(context, purchaseItem.category)
                 )
 
-                val price = df.format(purchaseItem.price).toString() + getCurrencyString(
-                    context,
-                    purchaseItem.currency
-                )
+                val price = formatPrice(purchaseItem.price, purchaseItem.currency)
                 DetailsRow(stringResource(id = R.string.price), price)
 
                 Row(modifier = Modifier.fillMaxWidth()) {
@@ -198,25 +195,6 @@ fun PurchaseDetailsScreen(
 }
 
 @Composable
-fun RecurringIntervalInfoDialog(isVisible: MutableState<Boolean>) {
-    if (isVisible.value) {
-        AlertDialog(
-            onDismissRequest = { isVisible.value = false },
-            title = {
-                Text(text = stringResource(id = R.string.info))
-            },
-            text = {
-               Text(text = stringResource(id = R.string.recurring_interval_info))
-            },
-            confirmButton = {
-                TextButton(onClick = {isVisible.value = false})
-                { Text(text = stringResource(id = R.string.agreed)) }
-            },
-        )
-    }
-}
-
-@Composable
 fun DetailsRow(
     title: String,
     description: String,
@@ -229,7 +207,7 @@ fun DetailsRow(
             .padding(top = margin_standard),
     ) {
         Text(
-            text = "$title:",
+            text = "$title",
             style = MaterialTheme.typography.titleSmall,
         )
 

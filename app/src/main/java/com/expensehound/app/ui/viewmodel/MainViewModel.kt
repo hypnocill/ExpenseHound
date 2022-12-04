@@ -2,21 +2,26 @@ package com.expensehound.app.ui.viewmodel
 
 import android.content.Context
 import android.graphics.Bitmap
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import com.expensehound.app.data.entity.Category
 import com.expensehound.app.data.entity.FulfilledDesire
+import com.expensehound.app.data.entity.Income
 import com.expensehound.app.data.entity.PurchaseItem
 import com.expensehound.app.data.entity.RecurringInterval
 import com.expensehound.app.data.repository.FulfilledDesireRepository
-
+import com.expensehound.app.data.repository.IncomeRepository
 import com.expensehound.app.data.repository.PurchaseRepository
+import com.expensehound.app.utils.BasePurchaseItemInput
+import com.expensehound.app.utils.IncomeInput
+import com.expensehound.app.utils.initBasePurchaseItemInput
+import com.expensehound.app.utils.initIncomeInput
 
 class MainViewModel(context: Context) : ViewModel() {
     private val repository = PurchaseRepository(context)
     private val fulfilledDesireRepository = FulfilledDesireRepository(context)
+    private val incomeRepository = IncomeRepository(context)
 
     val newPurchaseInput: BasePurchaseItemInput
     var newPurchaseIntent = mutableStateOf(false)
@@ -24,12 +29,17 @@ class MainViewModel(context: Context) : ViewModel() {
     val newFuturePurchaseInput: BasePurchaseItemInput
     var newFuturePurchaseIntent = mutableStateOf(false)
 
+    val newIncomeInput: IncomeInput
+    var newIncomeIntent = mutableStateOf(false)
+
     val purchasesFiltersMonth = mutableStateOf(false)
     val desiresFiltersMonth = mutableStateOf(false)
+    val incomeFiltersMonth = mutableStateOf(false)
 
     init {
         newPurchaseInput = initBasePurchaseItemInput()
         newFuturePurchaseInput = initBasePurchaseItemInput()
+        newIncomeInput = initIncomeInput()
     }
 
     fun setPurchaseFilterMonth(value: Boolean) {
@@ -74,7 +84,7 @@ class MainViewModel(context: Context) : ViewModel() {
         repository.updatePurchaseItemNotification(uid, notificationId, notificationTimestamp)
     }
 
-    fun updatePurchaseItemMainProperties(
+    fun updatePurchaseItem(
         uid: Int,
         name: String,
         image: Bitmap?,
@@ -101,39 +111,42 @@ class MainViewModel(context: Context) : ViewModel() {
     fun insertFulfilledDesire(fulfilledDesire: FulfilledDesire) {
         fulfilledDesireRepository.insert(fulfilledDesire)
     }
-}
 
-fun initBasePurchaseItemInput(): BasePurchaseItemInput {
-    return object : BasePurchaseItemInput {
-        override var id: MutableState<Int?> = mutableStateOf(PurchaseItemInputInitialValues.id)
-        override var text = mutableStateOf(PurchaseItemInputInitialValues.text)
-        override var price = mutableStateOf(PurchaseItemInputInitialValues.price)
-        override var selectedCategory =
-            mutableStateOf(PurchaseItemInputInitialValues.selectedCategory)
-        override var image: MutableState<Bitmap?> =
-            mutableStateOf(PurchaseItemInputInitialValues.image)
-        override var comment = mutableStateOf(PurchaseItemInputInitialValues.comment)
-        override var recurringInterval: MutableState<RecurringInterval> =
-            mutableStateOf(PurchaseItemInputInitialValues.recurringInterval)
+    fun getAllIncome(
+        container: SnapshotStateList<Income>,
+        from: Long? = null,
+        to: Long? = null
+    ) {
+        incomeRepository.getAll(container, from, to)
+    }
+
+    fun insertIncome(income: Income) {
+        incomeRepository.insert(income)
+    }
+
+    fun updateIncome(
+        uid: Int,
+        name: String,
+        amount: Double,
+        comment: String?,
+        recurringInterval: RecurringInterval
+    ) {
+        incomeRepository.update(
+            uid,
+            name,
+            amount,
+            comment,
+            recurringInterval
+        )
+    }
+
+    fun setIncomeFilterMonth(value: Boolean) {
+        incomeFiltersMonth.value = value
+    }
+
+    fun deleteIncome(uid: Int) {
+        incomeRepository.delete(uid)
     }
 }
 
-interface BasePurchaseItemInput {
-    var id: MutableState<Int?>
-    var text: MutableState<String>
-    var price: MutableState<String>
-    var selectedCategory: MutableState<Category>
-    var image: MutableState<Bitmap?>
-    var comment: MutableState<String>
-    var recurringInterval: MutableState<RecurringInterval>
-}
 
-object PurchaseItemInputInitialValues {
-    val id = null
-    val text = ""
-    val price = ""
-    val image = null
-    val selectedCategory = Category.OTHERS
-    val comment = ""
-    val recurringInterval = RecurringInterval.NONE
-}

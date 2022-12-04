@@ -21,30 +21,41 @@ import com.expensehound.app.utils.AppAnimationSpecs
 @Composable
 fun AppFab(navController: NavHostController, demoViewModel: MainViewModel) {
     val backstackEntry = navController.currentBackStackEntryAsState()
-    var purchaseFabVisible = false
-    var futurePurchaseFabVisible = false
+    var purchasesFabVisible = false
+    var desiresFabVisible = false
+    var incomeFabVisible = false
 
-    when(backstackEntry.value?.destination?.route) {
-        AppScreens.HomeNav.route -> purchaseFabVisible = true
-        AppScreens.Future.route -> futurePurchaseFabVisible = true
+    when (backstackEntry.value?.destination?.route) {
+        AppScreens.HomeNav.route -> purchasesFabVisible = true
+        AppScreens.Future.route -> desiresFabVisible = true
+        AppScreens.Income.route -> incomeFabVisible = true
     }
 
     var exitOverrideWithScaleAndFade = false
 
     if (
-        demoViewModel.newPurchaseIntent.value && demoViewModel.newPurchaseInput.text.value == ""
-        || demoViewModel.newFuturePurchaseIntent.value && demoViewModel.newFuturePurchaseInput.text.value == ""
+        demoViewModel.newPurchaseIntent.value
+        || demoViewModel.newFuturePurchaseIntent.value
+        || demoViewModel.newIncomeIntent.value
     ) {
-        purchaseFabVisible = false
-        futurePurchaseFabVisible = false
+        purchasesFabVisible = false
+        desiresFabVisible = false
+        incomeFabVisible = false
         exitOverrideWithScaleAndFade = true
     }
 
-    AnimatedContainer(isVisible = purchaseFabVisible, exitOverrideWithScaleAndFade = exitOverrideWithScaleAndFade, onClick =  { demoViewModel.newPurchaseIntent.value = true })
     AnimatedContainer(
-        isVisible = futurePurchaseFabVisible,
+        isVisible = purchasesFabVisible,
+        exitOverrideWithScaleAndFade = exitOverrideWithScaleAndFade,
+        onClick = { demoViewModel.newPurchaseIntent.value = true })
+    AnimatedContainer(
+        isVisible = desiresFabVisible,
         exitOverrideWithScaleAndFade = exitOverrideWithScaleAndFade,
         onClick = { demoViewModel.newFuturePurchaseIntent.value = true })
+    AnimatedContainer(
+        isVisible = incomeFabVisible,
+        exitOverrideWithScaleAndFade = exitOverrideWithScaleAndFade,
+        onClick = { demoViewModel.newIncomeIntent.value = true })
 }
 
 @OptIn(ExperimentalAnimationApi::class)

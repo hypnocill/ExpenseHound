@@ -3,16 +3,20 @@
 
     <string name="nav_home">Разходи</string>
     <string name="nav_nava">Желания</string>
+    <string name="nav_income">Доходи</string>
     <string name="nav_detail">Detail</string>
     <string name="nav_new_item">New Item</string>
     <string name="launch">Launch</string>
     <string name="new_purchase">Нов разход</string>
-    <string name="new_purchase_edit">Промени разход</string>
+    <string name="new_purchase_edit">Редактирай разход</string>
     <string name="new_future_purchase">Ново желание</string>
+    <string name="new_income">Нов доход</string>
+    <string name="edit_income">Редактирай доход</string>
     <string name="info">Информация</string>
     <string name="agreed">Добре</string>
     <string name="name">Име</string>
     <string name="price">Цена</string>
+    <string name="amount">Количество</string>
     <string name="comment">Коментар</string>
     <string name="created_at">Добавено на:</string>
     <string name="detail_screen">Detail Screen</string>
@@ -33,6 +37,7 @@
     <string name="recurring_interval_info">Текущият разход ще бъде автоматично добавяне в началото на избрания от вас времеви период, съответно всеки ден, в началото на всяка седмица (понеделник) или на първо число всеки месец. Може да ползвате автоматичното добавяне на разходи например за вашите месечни сметки.</string>
     <string name="added_success">Успешно добавихте</string>
     <string name="added_failure_missing_fields">Уверете се, че сте попълнили всички полета</string>
+    <string name="empty_list">Липсват данни</string>
 
     <string name="category_other">Друго</string>
     <string name="category_clothing">Облекло</string>
