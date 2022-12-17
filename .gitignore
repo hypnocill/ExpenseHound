@@ -17,6 +17,9 @@ out/
 # Gradle files
 .gradle/
 build/
+local.properties
+output.json
+output-metadata.json
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -55,3 +58,5 @@ captures/
 google-services.json
 
 .idea/deploymentTargetDropDown.xml
+
+.DS_Store

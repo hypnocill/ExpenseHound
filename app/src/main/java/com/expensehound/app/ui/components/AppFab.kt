@@ -10,33 +10,37 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.expensehound.app.R
-import com.expensehound.app.ui.nav.AppScreens
+import com.expensehound.app.ui.navigation.AppScreens
 import com.expensehound.app.ui.viewmodel.MainViewModel
 import com.expensehound.app.utils.AppAnimationSpecs
 
 @Composable
-fun AppFab(navController: NavHostController, demoViewModel: MainViewModel) {
-    val backstackEntry = navController.currentBackStackEntryAsState()
+fun AppFab(viewModel: MainViewModel, backtrace: State<NavBackStackEntry?>) {
     var purchasesFabVisible = false
     var desiresFabVisible = false
     var incomeFabVisible = false
 
-    when (backstackEntry.value?.destination?.route) {
-        AppScreens.HomeNav.route -> purchasesFabVisible = true
-        AppScreens.Future.route -> desiresFabVisible = true
-        AppScreens.Income.route -> incomeFabVisible = true
+    if (backtrace?.value?.destination?.route == AppScreens.HomeNav.route) {
+        when (viewModel.selectedHomeTopAppBarTab.value) {
+            0 -> purchasesFabVisible = true
+            1 -> desiresFabVisible = true
+            2 -> incomeFabVisible = true
+        }
     }
 
     var exitOverrideWithScaleAndFade = false
 
     if (
-        demoViewModel.newPurchaseIntent.value
-        || demoViewModel.newFuturePurchaseIntent.value
-        || demoViewModel.newIncomeIntent.value
+        viewModel.newPurchaseIntent.value
+        || viewModel.newFuturePurchaseIntent.value
+        || viewModel.newIncomeIntent.value
     ) {
         purchasesFabVisible = false
         desiresFabVisible = false
@@ -47,15 +51,15 @@ fun AppFab(navController: NavHostController, demoViewModel: MainViewModel) {
     AnimatedContainer(
         isVisible = purchasesFabVisible,
         exitOverrideWithScaleAndFade = exitOverrideWithScaleAndFade,
-        onClick = { demoViewModel.newPurchaseIntent.value = true })
+        onClick = { viewModel.newPurchaseIntent.value = true })
     AnimatedContainer(
         isVisible = desiresFabVisible,
         exitOverrideWithScaleAndFade = exitOverrideWithScaleAndFade,
-        onClick = { demoViewModel.newFuturePurchaseIntent.value = true })
+        onClick = { viewModel.newFuturePurchaseIntent.value = true })
     AnimatedContainer(
         isVisible = incomeFabVisible,
         exitOverrideWithScaleAndFade = exitOverrideWithScaleAndFade,
-        onClick = { demoViewModel.newIncomeIntent.value = true })
+        onClick = { viewModel.newIncomeIntent.value = true })
 }
 
 @OptIn(ExperimentalAnimationApi::class)

@@ -1,4 +1,4 @@
-package com.expensehound.app.ui.nav
+package com.expensehound.app.ui.navigation
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -9,10 +9,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.expensehound.app.ui.screens.desires.DesiresScreen
-import com.expensehound.app.ui.screens.income.IncomeScreen
 import com.expensehound.app.ui.screens.purchase_details.PurchaseDetailsScreen
-import com.expensehound.app.ui.screens.purchases.PurchasesScreen
+import com.expensehound.app.ui.screens.purchases.HomeScreen
 import com.expensehound.app.ui.screens.stats.StatsScreen
 import com.expensehound.app.ui.viewmodel.MainViewModel
 import com.expensehound.app.ui.viewmodel.StatsViewModel
@@ -34,21 +32,7 @@ fun DemoNavHost(
         modifier = modifier
     ) {
         composable(route = AppScreens.HomeNav.route) {
-            PurchasesScreen(viewModel) { item, index ->
-                navController.navigate("${AppScreens.Detail.route}/${item.uid}")
-            }
-        }
-        composable(route = AppScreens.Future.route) {
-            viewModel.newPurchaseIntent.value = false
-            DesiresScreen(viewModel) { item, index ->
-                navController.navigate("${AppScreens.FutureDetail.route}/${item.uid}")
-            }
-        }
-        composable(route = AppScreens.Income.route) {
-            viewModel.newIncomeIntent.value = false
-            IncomeScreen(viewModel) { item, index ->
-                // TODO: ADD NAVIGATION
-            }
+            HomeScreen(viewModel, navController)
         }
         composable(route = AppScreens.Stats.route) {
             StatsScreen(viewModel, statsViewModel)

@@ -18,3 +18,7 @@ data class Income(
     @ColumnInfo(name = "created_at") override val createdAt: Long
 
 ): ItemWithRecurringInterval
+
+data class IncomeSum(
+    var amount: Double
+)

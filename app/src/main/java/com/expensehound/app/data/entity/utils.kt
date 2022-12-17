@@ -29,12 +29,11 @@ enum class RecurringInterval() {
 }
 
 fun getCurrencyString(context: Context, currency: Currency): String {
-    val activity = context
 
     return when (currency) {
-        Currency.BGN -> activity.getString(R.string.currency_bgn)
-        Currency.EUR -> activity.getString(R.string.currency_eur)
-        Currency.USD -> activity.getString(R.string.currency_usd)
+        Currency.BGN -> context.getString(R.string.currency_bgn)
+        Currency.EUR -> context.getString(R.string.currency_eur)
+        Currency.USD -> context.getString(R.string.currency_usd)
     }
 }
 

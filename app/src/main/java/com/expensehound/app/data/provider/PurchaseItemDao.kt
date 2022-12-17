@@ -22,7 +22,7 @@ interface PurchaseItemDao {
     @Query("SELECT category, SUM(price) as sum_price, COUNT(*) as count FROM purchase_items WHERE is_purchased=1 AND (:from IS NULL OR created_at >= :from) AND (:to IS NULL OR created_at <= :to) GROUP BY category ORDER BY sum_price DESC")
     fun getPurchaseItemsGroupedByCategory(from: Long? = null, to: Long? = null): Flow<List<StatsPurchaseItemsByCategory>>
 
-    @Query("SELECT * FROM purchase_items WHERE is_purchased=0 AND (:from IS NULL OR created_at >= :from) AND (:to IS NULL OR created_at <= :to)  ORDER BY uid DESC")
+    @Query("SELECT * FROM purchase_items WHERE is_purchased=0 AND (:from IS NULL OR created_at >= :from) AND (:to IS NULL OR created_at <= :to) ORDER BY uid DESC")
     fun getAllDesires(from: Long? = null, to: Long? = null): Flow<List<PurchaseItem>>
 
     @Query("SELECT * FROM purchase_items WHERE uid = :uid")

@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">Expense Hound</string>
 
-    <string name="nav_home">Разходи</string>
+    <string name="nav_home">Моите пари</string>
+    <string name="nav_purchases">Разходи</string>
     <string name="nav_nava">Желания</string>
     <string name="nav_income">Доходи</string>
     <string name="nav_detail">Detail</string>
@@ -16,7 +17,7 @@
     <string name="agreed">Добре</string>
     <string name="name">Име</string>
     <string name="price">Цена</string>
-    <string name="amount">Количество</string>
+    <string name="amount">Сума</string>
     <string name="comment">Коментар</string>
     <string name="created_at">Добавено на:</string>
     <string name="detail_screen">Detail Screen</string>
@@ -38,6 +39,7 @@
     <string name="added_success">Успешно добавихте</string>
     <string name="added_failure_missing_fields">Уверете се, че сте попълнили всички полета</string>
     <string name="empty_list">Липсват данни</string>
+    <string name="income_sum">Общо приходи:</string>
 
     <string name="category_other">Друго</string>
     <string name="category_clothing">Облекло</string>

@@ -119,7 +119,9 @@ fun NewPurchaseScreen(input: BasePurchaseItemInput, purchaseIntent: MutableState
                         .fillMaxWidth(0.70f)
                 )
 
-                IconButton(modifier = Modifier.fillMaxWidth(), onClick = { cameraLauncher.launch() }) {
+                IconButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { cameraLauncher.launch() }) {
                     Icon(
                         modifier = Modifier.size(60.dp),
                         painter = painterResource(id = R.drawable.ic_outline_camera_alt_24),

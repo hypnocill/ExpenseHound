@@ -9,15 +9,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.plusAssign
 import com.expensehound.app.R
 import com.expensehound.app.ui.components.AppFab
-import com.expensehound.app.ui.nav.AddNewEntityTopAppBar
-import com.expensehound.app.ui.nav.AppScreens
-import com.expensehound.app.ui.nav.BottomNavigation
-import com.expensehound.app.ui.nav.DemoNavHost
-import com.expensehound.app.ui.nav.DemoTopAppBar
+import com.expensehound.app.ui.navigation.AddNewEntityTopAppBar
+import com.expensehound.app.ui.navigation.AppScreens
+import com.expensehound.app.ui.navigation.BottomNavigation
+import com.expensehound.app.ui.navigation.DemoNavHost
+import com.expensehound.app.ui.navigation.TopAppBar
 import com.expensehound.app.ui.theme.ExpenseHoundTheme
 import com.expensehound.app.ui.viewmodel.MainViewModel
 import com.expensehound.app.ui.viewmodel.StatsViewModel
@@ -29,18 +30,17 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 
+//TODO: Refactor this file to make it short and lean
 @RequiresApi(Build.VERSION_CODES.N)
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("RestrictedApi")
 @ExperimentalMaterialNavigationApi
 @Composable
-fun App(demoViewModel: MainViewModel, statsViewModel: StatsViewModel) {
+fun App(viewModel: MainViewModel, statsViewModel: StatsViewModel) {
     ExpenseHoundTheme {
 
         val navScreens = listOf(
             AppScreens.HomeNav,
-            AppScreens.Future,
-            AppScreens.Income,
             AppScreens.Stats,
         )
 
@@ -51,77 +51,80 @@ fun App(demoViewModel: MainViewModel, statsViewModel: StatsViewModel) {
 
         ModalBottomSheetLayout(bottomSheetNavigator) {
             Scaffold(floatingActionButton = {
-                AppFab(navController, demoViewModel)
+                val backstackEntry = navController.currentBackStackEntryAsState()
+
+                AppFab(viewModel, backstackEntry)
+
             }, bottomBar = {
                 BottomNavigation(navController = navController, items = navScreens)
             }, topBar = {
 
-                if (demoViewModel.newPurchaseIntent.value) {
+                if (viewModel.newPurchaseIntent.value) {
                     val titleStringId =
-                        if (demoViewModel.newPurchaseInput.id.value == null) R.string.new_purchase else R.string.new_purchase_edit
+                        if (viewModel.newPurchaseInput.id.value == null) R.string.new_purchase else R.string.new_purchase_edit
 
                     AddNewEntityTopAppBar(
                         title = stringResource(id = titleStringId),
                         onDismiss = {
-                            demoViewModel.newPurchaseIntent.value = false
-                            resetNewPurchaseInput(demoViewModel.newPurchaseInput)
+                            viewModel.newPurchaseIntent.value = false
+                            resetNewPurchaseInput(viewModel.newPurchaseInput)
                         },
                         onSave = {
                             onPurchaseInputSave(
-                                demoViewModel.newPurchaseIntent,
-                                demoViewModel.newPurchaseInput,
+                                viewModel.newPurchaseIntent,
+                                viewModel.newPurchaseInput,
                                 context,
-                                demoViewModel,
+                                viewModel,
                                 true
                             )
                         }
                     )
-                } else if (demoViewModel.newFuturePurchaseIntent.value) {
+                } else if (viewModel.newFuturePurchaseIntent.value) {
                     val titleStringId =
-                        if (demoViewModel.newPurchaseInput.id.value == null) R.string.new_future_purchase else R.string.new_purchase_edit
+                        if (viewModel.newPurchaseInput.id.value == null) R.string.new_future_purchase else R.string.new_purchase_edit
 
                     AddNewEntityTopAppBar(
                         title = stringResource(id = titleStringId),
                         onDismiss = {
-                            demoViewModel.newFuturePurchaseIntent.value = false
-                            resetNewPurchaseInput(demoViewModel.newFuturePurchaseInput)
+                            viewModel.newFuturePurchaseIntent.value = false
+                            resetNewPurchaseInput(viewModel.newFuturePurchaseInput)
                         },
                         onSave = {
                             onPurchaseInputSave(
-                                demoViewModel.newFuturePurchaseIntent,
-                                demoViewModel.newFuturePurchaseInput,
+                                viewModel.newFuturePurchaseIntent,
+                                viewModel.newFuturePurchaseInput,
                                 context,
-                                demoViewModel,
+                                viewModel,
                                 false
                             )
                         }
                     )
-                } else if (demoViewModel.newIncomeIntent.value) {
+                } else if (viewModel.newIncomeIntent.value) {
                     val titleStringId =
-                        if (demoViewModel.newIncomeInput.id.value == null) R.string.new_income else R.string.edit_income
+                        if (viewModel.newIncomeInput.id.value == null) R.string.new_income else R.string.edit_income
 
                     AddNewEntityTopAppBar(
                         title = stringResource(id = titleStringId),
                         onDismiss = {
-                            demoViewModel.newIncomeIntent.value = false
-                            resetIncomeInput(demoViewModel.newIncomeInput)
+                            viewModel.newIncomeIntent.value = false
+                            resetIncomeInput(viewModel.newIncomeInput)
                         },
                         onSave = {
                             onIncomeInputSave(
-                                demoViewModel.newIncomeIntent,
-                                demoViewModel.newIncomeInput,
+                                viewModel.newIncomeIntent,
+                                viewModel.newIncomeInput,
                                 context,
-                                demoViewModel,
+                                viewModel,
                             )
                         }
                     )
                 } else {
-                    DemoTopAppBar(navController = navController)
+                    TopAppBar(navController = navController)
                 }
             }) { innerPadding ->
                 DemoNavHost(
                     navController = navController,
-                    demoViewModel,
+                    viewModel,
                     modifier = Modifier.padding(innerPadding),
                     statsViewModel
                 )

@@ -23,6 +23,8 @@ class MainViewModel(context: Context) : ViewModel() {
     private val fulfilledDesireRepository = FulfilledDesireRepository(context)
     private val incomeRepository = IncomeRepository(context)
 
+    var selectedHomeTopAppBarTab = mutableStateOf(0)
+
     val newPurchaseInput: BasePurchaseItemInput
     var newPurchaseIntent = mutableStateOf(false)
 
@@ -40,6 +42,10 @@ class MainViewModel(context: Context) : ViewModel() {
         newPurchaseInput = initBasePurchaseItemInput()
         newFuturePurchaseInput = initBasePurchaseItemInput()
         newIncomeInput = initIncomeInput()
+    }
+
+    fun setSelectedHomeTopAppBarTab(selectedTabIndex: Int) {
+        selectedHomeTopAppBarTab.value = selectedTabIndex
     }
 
     fun setPurchaseFilterMonth(value: Boolean) {
@@ -144,8 +150,8 @@ class MainViewModel(context: Context) : ViewModel() {
         incomeFiltersMonth.value = value
     }
 
-    fun deleteIncome(uid: Int) {
-        incomeRepository.delete(uid)
+    fun deleteIncome(income: Income) {
+        incomeRepository.delete(income)
     }
 }
 

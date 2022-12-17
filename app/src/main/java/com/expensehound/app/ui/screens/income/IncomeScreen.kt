@@ -14,21 +14,26 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.expensehound.app.R
+import com.expensehound.app.data.entity.Currency
 import com.expensehound.app.data.entity.Income
+import com.expensehound.app.data.entity.getCurrencyString
 import com.expensehound.app.ui.components.AppFilterChip
 import com.expensehound.app.ui.components.AppItemCard
 import com.expensehound.app.ui.components.EmptyListText
-import com.expensehound.app.ui.components.NewIncomeScreenAnimated
 import com.expensehound.app.ui.theme.margin_half
 import com.expensehound.app.ui.viewmodel.MainViewModel
+import com.expensehound.app.utils.convertTimestampToDatetimeString
 import com.expensehound.app.utils.getStartOfMonthAsTimestamp
 import com.expensehound.app.utils.loadIncomeInputInState
 
 @Composable
-fun IncomeScreen(viewModel: MainViewModel, onItemClicked: (Income, Int) -> Unit) {
+fun IncomeScreen(viewModel: MainViewModel) {
     var list = remember { mutableStateListOf<Income>() }
+    val context = LocalContext.current
+    val currency = getCurrencyString(context, Currency.BGN)
 
     LaunchedEffect(key1 = viewModel.incomeFiltersMonth.value) {
         var from: Long? = null
@@ -62,24 +67,22 @@ fun IncomeScreen(viewModel: MainViewModel, onItemClicked: (Income, Int) -> Unit)
                 itemsIndexed(items = list) { index, item ->
                     AppItemCard(
                         title = item.name,
-                        subtitle = item.comment,
-                        onClick = { /*TODO*/ },
+                        subtitle = item.amount.toString() + currency,
+                        date = convertTimestampToDatetimeString(item.createdAt),
+                        onClick = {
+                            viewModel.newIncomeIntent.value = true
+                            loadIncomeInputInState(viewModel.newIncomeInput, item)
+                        },
                         onEdit = {
                             viewModel.newIncomeIntent.value = true
                             loadIncomeInputInState(viewModel.newIncomeInput, item)
                         },
-                        onDelete = { viewModel.deleteIncome(item.uid) },
-                        isCreatedAutomatically = item.createdAutomatically
+                        onDelete = { viewModel.deleteIncome(item) },
+                        isCreatedAutomatically = item.createdAutomatically,
                     )
                 }
             }
         }
-
-        NewIncomeScreenAnimated(
-            isVisible = viewModel.newIncomeIntent.value,
-            input = viewModel.newIncomeInput,
-            incomeIntent = viewModel.newIncomeIntent
-        )
     }
 
 }

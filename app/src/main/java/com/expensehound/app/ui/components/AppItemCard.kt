@@ -1,11 +1,10 @@
 package com.expensehound.app.ui.components
 
 import android.graphics.Bitmap
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -25,12 +24,12 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.expensehound.app.R
 import com.expensehound.app.ui.theme.margin_half
 import com.expensehound.app.ui.theme.margin_standard
 
-@RequiresApi(Build.VERSION_CODES.N)
 @Composable
 fun AppItemCard(
     title: String,
@@ -40,6 +39,8 @@ fun AppItemCard(
     onEdit: () -> Unit,
     onDelete: () -> Unit,
     isCreatedAutomatically: Boolean,
+    height: Dp = 150.dp,
+    date: String? = null,
     additionalActions: @Composable() (() -> Unit)? = null
 ) {
     val openDeleteDialog = remember { mutableStateOf(false) }
@@ -47,9 +48,9 @@ fun AppItemCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(150.dp)
             .padding(margin_half)
             .clickable { onClick() }
+            .height(height)
     ) {
         Row(
             modifier = Modifier
@@ -112,6 +113,23 @@ fun AppItemCard(
                         .fillMaxHeight()
                         .clip(RoundedCornerShape(15.dp, 0.dp, 0.dp, 15.dp))
                 )
+            }
+
+            if (date != null) {
+                Box{
+                    Column(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(horizontal = margin_standard, vertical = margin_half),
+                        verticalArrangement = Arrangement.Bottom,
+                    ) {
+                        Text(
+                            text = date,
+                            style = MaterialTheme.typography.labelSmall,
+                            maxLines = 1
+                        )
+                    }
+                }
             }
         }
     }

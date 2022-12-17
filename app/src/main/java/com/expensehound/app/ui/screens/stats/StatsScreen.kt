@@ -10,13 +10,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,10 +29,12 @@ import androidx.compose.ui.unit.sp
 import com.expensehound.app.R
 import com.expensehound.app.data.entity.Currency
 import com.expensehound.app.data.entity.FulfilledDesire
+import com.expensehound.app.data.entity.IncomeSum
 import com.expensehound.app.data.entity.PurchaseItem
 import com.expensehound.app.data.entity.StatsPurchaseItemsByCategory
 import com.expensehound.app.data.entity.getCategoryString
 import com.expensehound.app.data.entity.getCurrencyString
+import com.expensehound.app.ui.components.AppDivier
 import com.expensehound.app.ui.components.AppFilterChip
 import com.expensehound.app.ui.components.EmptyListText
 import com.expensehound.app.ui.components.StatsLegendRow
@@ -51,9 +54,13 @@ import me.bytebeats.views.charts.simpleChartAnimation
 @Composable
 fun StatsScreen(viewModel: MainViewModel, statsViewModel: StatsViewModel) {
     val context = LocalContext.current
+    val currency = getCurrencyString(context, Currency.BGN)
+
     var purchases = remember { mutableStateListOf<StatsPurchaseItemsByCategory>() }
     var desires = remember { mutableStateListOf<PurchaseItem>() }
     var fulfilledDesires = remember { mutableStateListOf<FulfilledDesire>() }
+    val incomeSum = remember { mutableStateOf(IncomeSum(amount = .0)) }
+
 
     LaunchedEffect(key1 = statsViewModel.statsFiltersMonth.value) {
         var from: Long? = null
@@ -66,13 +73,14 @@ fun StatsScreen(viewModel: MainViewModel, statsViewModel: StatsViewModel) {
         viewModel.getAllDesires(desires, from)
         statsViewModel.getAllPurchaseItemsGroupedByCategory(purchases, from)
         statsViewModel.getAllFulfilledDesires(fulfilledDesires, from)
+        statsViewModel.getIncomeSum(incomeSum, from)
     }
 
-    var totalSumPrice = 0.0
+    var purchasesSumAmount = 0.0
     val fulfilledDesiresCount = fulfilledDesires.size
 
     purchases.forEach {
-        totalSumPrice += it.sumPrice
+        purchasesSumAmount += it.sumPrice
     }
 
     ExpenseHoundTheme {
@@ -97,25 +105,16 @@ fun StatsScreen(viewModel: MainViewModel, statsViewModel: StatsViewModel) {
                         statsViewModel.setStatsFilterMonth(!statsViewModel.statsFiltersMonth.value)
                     }
                 }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(text = stringResource(id = R.string.stats_expenses))
-                    Text(
-                        text = df.format(totalSumPrice) + getCurrencyString(context, Currency.BGN),
-                        fontSize = 35.sp
-                    )
-                }
 
-                Divider(
-                    color = MaterialTheme.colorScheme.outline,
-                    thickness = 0.5.dp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = margin_standard)
-                )
+                val purchasesAmountSum = df.format(purchasesSumAmount) + currency;
+                AmountSummary( stringResource(id = R.string.stats_expenses), purchasesAmountSum)
+
+                AppDivier()
+
+                val incomeAmountSum = df.format(incomeSum.value.amount) + currency;
+                AmountSummary( stringResource(id = R.string.income_sum), incomeAmountSum)
+
+                AppDivier()
 
                 Text(
                     text = stringResource(id = R.string.stats_expenses_by_categoy),
@@ -163,13 +162,7 @@ fun StatsScreen(viewModel: MainViewModel, statsViewModel: StatsViewModel) {
                     }
                 }
 
-                Divider(
-                    color = MaterialTheme.colorScheme.outline,
-                    thickness = 0.5.dp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = margin_standard)
-                )
+                AppDivier()
 
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -240,6 +233,21 @@ interface FulfilledDesiresStatsLegendsRow {
 
 val STATS_COLOR_PRIMARY_INDEX = 6;
 val STATS_COLOR_SECONDARY_INDEX = 7;
+
+@Composable
+fun AmountSummary(title: String, text: String ) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = title)
+        Text(
+            text = text,
+            fontSize = 35.sp
+        )
+    }
+}
 
 @Composable
 fun StatsColor(index: Int): Color {

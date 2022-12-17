@@ -6,13 +6,20 @@ plugins {
 }
 
 android {
+
+    bundle {
+        storeArchive {
+            enable = false
+        }
+    }
+
     compileSdk 32
 
     defaultConfig {
         applicationId "com.expensehound.app"
-        minSdk 24
+        minSdk 29
         targetSdk 32
-        versionCode 5
+        versionCode 10
         versionName '1.0.0'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
@@ -119,6 +126,8 @@ dependencies {
     // Accompanist
     implementation "com.google.accompanist:accompanist-navigation-material:0.25.0"
     implementation "com.google.accompanist:accompanist-flowlayout:0.25.0"
+    implementation "com.google.accompanist:accompanist-pager:0.25.0"
+    implementation "com.google.accompanist:accompanist-pager-indicators:0.25.0"
 
     // Room
     implementation "androidx.room:room-runtime:2.4.2"

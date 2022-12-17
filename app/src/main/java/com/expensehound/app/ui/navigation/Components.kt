@@ -1,4 +1,4 @@
-package com.expensehound.app.ui.nav
+package com.expensehound.app.ui.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,16 +48,15 @@ fun BottomNavigation(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DemoTopAppBar(navController: NavHostController) {
+fun TopAppBar(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val route = navBackStackEntry?.destination?.route
     SmallTopAppBar(
         navigationIcon = {
-            if (route.equals("list") || route.equals("future") || route.equals("income") || route.equals("stats")) {
+            if (route.equals("home") || route.equals("stats")
+            ) {
                 val iconToSet = when (route) {
-                    "list" -> AppScreens.HomeNav.icon
-                    "future" -> AppScreens.Future.icon
-                    "income" -> AppScreens.Income.icon
+                    "home" -> AppScreens.HomeNav.icon
                     "stats" -> AppScreens.Stats.icon
                     else -> AppScreens.Detail.icon
                 }
@@ -69,14 +68,8 @@ fun DemoTopAppBar(navController: NavHostController) {
             }
         },
         title = {
-            if (route.equals("list")) {
+            if (route.equals("home")) {
                 Text(stringResource(id = R.string.nav_home))
-            }
-            if (route.equals("future")) {
-                Text(stringResource(id = R.string.nav_nava))
-            }
-            if (route.equals("income")) {
-                Text(stringResource(id = R.string.nav_income))
             }
             if (route.equals("stats")) {
                 Text(stringResource(id = R.string.stats))

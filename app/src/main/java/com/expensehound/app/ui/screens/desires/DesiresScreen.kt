@@ -30,8 +30,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.expensehound.app.R
+import com.expensehound.app.data.entity.Currency
 import com.expensehound.app.data.entity.FulfilledDesire
 import com.expensehound.app.data.entity.PurchaseItem
+import com.expensehound.app.data.entity.getCurrencyString
 import com.expensehound.app.ui.components.AppFilterChip
 import com.expensehound.app.ui.components.AppItemCard
 import com.expensehound.app.ui.components.DateTimePicker
@@ -55,6 +57,8 @@ fun DesiresScreen(
     viewModel: MainViewModel,
     onItemClicked: (PurchaseItem, Int) -> Unit
 ) {
+    val context = LocalContext.current
+    val currency = getCurrencyString(context, Currency.BGN)
     var list = remember { mutableStateListOf<PurchaseItem>() }
 
     LaunchedEffect(key1 = viewModel.desiresFiltersMonth.value) {
@@ -89,7 +93,7 @@ fun DesiresScreen(
                 itemsIndexed(items = list) { index, item ->
                     AppItemCard(
                         title = item.name,
-                        subtitle = formatPrice(item.price, item.currency),
+                        subtitle = formatPrice(item.price) + currency,
                         imageBitmap = item.image,
                         isCreatedAutomatically = item.createdAutomatically,
                         onClick = { onItemClicked(item, index) },
@@ -104,12 +108,6 @@ fun DesiresScreen(
                 }
             }
         }
-
-        NewPurchaseScreenAnimated(
-            isVisible = viewModel.newFuturePurchaseIntent.value,
-            input = viewModel.newFuturePurchaseInput,
-            purchaseIntent = viewModel.newFuturePurchaseIntent
-        )
     }
 
 }

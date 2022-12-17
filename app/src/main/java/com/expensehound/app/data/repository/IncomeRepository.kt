@@ -1,11 +1,10 @@
 package com.expensehound.app.data.repository
 
 import android.content.Context
-import android.graphics.Bitmap
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import com.expensehound.app.data.entity.Category
 import com.expensehound.app.data.entity.Income
-import com.expensehound.app.data.entity.PurchaseItem
+import com.expensehound.app.data.entity.IncomeSum
 import com.expensehound.app.data.entity.RecurringInterval
 import com.expensehound.app.data.provider.AppDatabase
 import kotlinx.coroutines.CoroutineScope
@@ -55,9 +54,15 @@ class IncomeRepository(context: Context) {
         }
     }
 
-    fun delete(uid: Int) {
+    fun delete(income: Income) {
         CoroutineScope(Dispatchers.IO).launch {
-            db.purchaseItemDao().delete(uid)
+            db.incomeDao().delete(income)
+        }
+    }
+
+    fun getSum(incomeSum: MutableState<IncomeSum>, from: Long? = null, to: Long? = null) {
+        CoroutineScope(Dispatchers.IO).launch {
+            incomeSum.value.amount = db.incomeDao().getSum(from, to).amount
         }
     }
 

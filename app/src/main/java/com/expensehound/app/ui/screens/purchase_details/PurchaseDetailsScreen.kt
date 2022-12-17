@@ -61,6 +61,7 @@ fun PurchaseDetailsScreen(
     uid: Int,
 ) {
     val context = LocalContext.current
+    val currency = getCurrencyString(context, Currency.BGN)
     var purchaseItems = remember { mutableStateListOf<PurchaseItem>() }
     val recurringIntervalDialogVisible = remember { mutableStateOf(false) }
 
@@ -141,7 +142,7 @@ fun PurchaseDetailsScreen(
                     getCategoryString(context, purchaseItem.category)
                 )
 
-                val price = formatPrice(purchaseItem.price, purchaseItem.currency)
+                val price = formatPrice(purchaseItem.price) + currency
                 DetailsRow(stringResource(id = R.string.price), price)
 
                 Row(modifier = Modifier.fillMaxWidth()) {

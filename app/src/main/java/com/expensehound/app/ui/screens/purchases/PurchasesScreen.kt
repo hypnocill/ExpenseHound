@@ -16,9 +16,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.expensehound.app.R
+import com.expensehound.app.data.entity.Currency
 import com.expensehound.app.data.entity.PurchaseItem
+import com.expensehound.app.data.entity.getCurrencyString
 import com.expensehound.app.ui.components.AppFilterChip
 import com.expensehound.app.ui.components.AppItemCard
 import com.expensehound.app.ui.components.EmptyListText
@@ -35,6 +38,8 @@ fun PurchasesScreen(
     viewModel: MainViewModel,
     onItemClicked: (PurchaseItem, Int) -> Unit
 ) {
+    val context = LocalContext.current
+    val currency = getCurrencyString(context, Currency.BGN)
     var list = remember { mutableStateListOf<PurchaseItem>() }
 
     LaunchedEffect(key1 = viewModel.purchasesFiltersMonth.value) {
@@ -48,7 +53,6 @@ fun PurchasesScreen(
     }
 
     Surface(color = MaterialTheme.colorScheme.background) {
-
         Column {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                 AppFilterChip(
@@ -70,7 +74,7 @@ fun PurchasesScreen(
                 itemsIndexed(items = list) { index, item ->
                     AppItemCard(
                         title = item.name,
-                        subtitle = formatPrice(item.price, item.currency),
+                        subtitle = formatPrice(item.price) + currency,
                         imageBitmap = item.image,
                         isCreatedAutomatically = item.createdAutomatically,
                         onClick = { onItemClicked(item, index) },
@@ -83,11 +87,6 @@ fun PurchasesScreen(
                 }
             }
         }
-        NewPurchaseScreenAnimated(
-            isVisible = viewModel.newPurchaseIntent.value,
-            input = viewModel.newPurchaseInput,
-            purchaseIntent = viewModel.newPurchaseIntent
-        )
     }
 }
 
